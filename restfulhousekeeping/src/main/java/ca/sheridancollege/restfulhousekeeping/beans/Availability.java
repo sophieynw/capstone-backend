@@ -22,5 +22,5 @@ public class Availability {
 	private Long id;
 	@OneToOne
 	@JoinColumn(name="cleanerId", nullable=false)
-	private Cleaner cleaner;
+	private User cleaner;
 }

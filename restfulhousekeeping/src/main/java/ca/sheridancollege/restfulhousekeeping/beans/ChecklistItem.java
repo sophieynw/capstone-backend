@@ -22,7 +22,7 @@ public class ChecklistItem {
 	private Long id;
 	@ManyToOne
 	@JoinColumn(name="propertyId", nullable=false)
-	private Manager manager;
+	private User manager;
 	
 	private String description;
 	private Integer frequencyDays;
