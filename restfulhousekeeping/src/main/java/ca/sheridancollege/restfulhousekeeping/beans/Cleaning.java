@@ -26,11 +26,11 @@ public class Cleaning {
 	
 	@ManyToOne
 	@JoinColumn(name="managerId", nullable=false)
-	private Manager manager;
+	private User manager;
 	
 	@ManyToOne
 	@JoinColumn(name="cleanerId", nullable=false)
-	private Cleaner cleaner;
+	private User cleaner;
 	
 	@OneToOne
 	@JoinColumn(name="propertyId", nullable=false)

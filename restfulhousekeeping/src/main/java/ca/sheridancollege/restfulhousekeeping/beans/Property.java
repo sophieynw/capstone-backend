@@ -22,7 +22,7 @@ public class Property {
 	private Long id;
 	@ManyToOne
 	@JoinColumn(name="managerId", nullable=false)
-	private Manager manager;
+	private User manager;
 	
 	private String name;
 	private String street;
