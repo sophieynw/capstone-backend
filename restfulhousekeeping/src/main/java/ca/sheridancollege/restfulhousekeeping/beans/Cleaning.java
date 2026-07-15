@@ -38,6 +38,8 @@ public class Cleaning {
 	
 	private LocalDateTime dateTimeStart;
 	private LocalDateTime dateTimeEnd;
+	private LocalDateTime dateTimeStarted;
+	private LocalDateTime dateTimeCompleted;
 	private String notes;
 	private Boolean isComplete;
 }
