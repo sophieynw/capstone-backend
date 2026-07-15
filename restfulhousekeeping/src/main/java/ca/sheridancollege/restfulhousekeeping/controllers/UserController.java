@@ -47,9 +47,9 @@ public class UserController {
         return userRepository.findById(id).map(existing -> {
             existing.setFirstName(updated.getFirstName());
             existing.setLastName(updated.getLastName());
-            existing.setUserName(updated.getUserName());
+            existing.setUsername(updated.getUsername());
             existing.setEmail(updated.getEmail());
-            existing.setPasswordHash(updated.getPasswordHash());
+            existing.setPassword(updated.getPassword());
             existing.setPhoneNumber(updated.getPhoneNumber());
             return ResponseEntity.ok(userRepository.save(existing));
         }).orElse(ResponseEntity.notFound().build());

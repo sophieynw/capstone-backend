@@ -3,8 +3,8 @@ package ca.sheridancollege.restfulhousekeeping.bootstrap;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import ca.sheridancollege.restfulhousekeeping.beans.Availability;
@@ -21,27 +21,19 @@ import ca.sheridancollege.restfulhousekeeping.repositories.OrganizationRepositor
 import ca.sheridancollege.restfulhousekeeping.repositories.PropertyRepository;
 import ca.sheridancollege.restfulhousekeeping.repositories.SlotRepository;
 import ca.sheridancollege.restfulhousekeeping.repositories.UserRepository;
+import lombok.AllArgsConstructor;
 
 @Component
+@AllArgsConstructor
 public class BootstrapData implements CommandLineRunner {
 	
-	@Autowired
-	private OrganizationRepository organizationRepository;
-	
-	@Autowired
-	private UserRepository userRepository;
-	
-	@Autowired
-	private PropertyRepository propertyRepository;
-	
-	@Autowired
-	private CleaningRepository cleaningRepository;
-	
-	@Autowired
-	private AvailabilityRepository availabilityRepository;
-	
-	@Autowired
-	private SlotRepository slotRepository;
+	private final OrganizationRepository organizationRepository;
+	private final UserRepository userRepository;
+	private final PropertyRepository propertyRepository;
+	private final CleaningRepository cleaningRepository;
+	private final AvailabilityRepository availabilityRepository;
+	private final SlotRepository slotRepository;
+	private final PasswordEncoder passwordEncoder;
 	
 	@Override
 	public void run(String... args) throws Exception {
@@ -54,37 +46,37 @@ public class BootstrapData implements CommandLineRunner {
 				.description("We specialize in literally everything.")
 				.build();
 		User manager1 = User.builder()
-				.firstName("Luke")
-				.lastName("Skywalker")
-				.userName("JediMaster")
-				.email("fathersday66@gmail.com")
-				.passwordHash("NotAHashYet")
-				.phoneNumber("416-888-6666")
+				.firstName("Sophie")
+				.lastName("Wang")
+				.username("sophie")
+				.email("sophie@test.com")
+				.password(passwordEncoder.encode("password"))
+				.phoneNumber("6471231234")
 				.role(Role.MANAGER)
 				.build();
 		User manager2 = User.builder()
 				.firstName("Kaladin")
 				.lastName("Stormblessed")
-				.userName("H1ghst0rm$")
+				.username("H1ghst0rm$")
 				.email("spears_and_storms#@gmail.com")
-				.passwordHash("NotAHashYet")
+				.password("NotAHashYet")
 				.phoneNumber("905-608-9000")
 				.role(Role.MANAGER)
 				.build();
 		User cleaner1 = User.builder()
 				.firstName("John")
 				.lastName("Smith")
-				.userName("GenericUsername")
+				.username("GenericUsername")
 				.email("bubblyfresh123@gmail.com")
-				.passwordHash("Password123")
+				.password("Password123")
 				.role(Role.CLEANER)
 				.build();
 		User cleaner2 = User.builder()
 				.firstName("Jane")
 				.lastName("Smith")
-				.userName("GenericUsername")
+				.username("GenericUsername")
 				.email("bubblyfresh456@gmail.com")
-				.passwordHash("Password456")
+				.password("Password456")
 				.role(Role.CLEANER)
 				.build();
 		Property property1 = Property.builder()
