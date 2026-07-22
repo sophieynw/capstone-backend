@@ -9,6 +9,7 @@ import ca.sheridancollege.restfulhousekeeping.beans.User;
 import ca.sheridancollege.restfulhousekeeping.models.AuthenticationRequest;
 import ca.sheridancollege.restfulhousekeeping.models.AuthenticationResponse;
 import ca.sheridancollege.restfulhousekeeping.models.RegisterRequest;
+import ca.sheridancollege.restfulhousekeeping.models.UserDto;
 import ca.sheridancollege.restfulhousekeeping.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 
@@ -35,7 +36,20 @@ public class AuthenticationService {
 				.build();
 		userRepository.save(user);
 		var jwtToken = jwtService.generateToken(user);
-		return AuthenticationResponse.builder().token(jwtToken).build();
+		UserDto userDto = UserDto.builder()
+		        .id(user.getId())
+		        .organization(user.getOrganization())
+		        .firstName(user.getFirstName())
+		        .lastName(user.getLastName())
+		        .username(user.getUsername())
+		        .email(user.getEmail())
+		        .phoneNumber(user.getPhoneNumber())
+		        .role(user.getRole())
+		        .build();
+		return AuthenticationResponse.builder()
+				.token(jwtToken)
+				.user(userDto)
+				.build();
 	}
 	
 	// a method to authenticate an existing user and generate a JWT for them
@@ -44,7 +58,20 @@ public class AuthenticationService {
 				request.getUsername(), request.getPassword()));
 		User user = userRepository.findByUsername(request.getUsername()).orElseThrow();
 		var jwtToken = jwtService.generateToken(user);
-		return AuthenticationResponse.builder().token(jwtToken).build();
+		UserDto userDto = UserDto.builder()
+		        .id(user.getId())
+		        .organization(user.getOrganization())
+		        .firstName(user.getFirstName())
+		        .lastName(user.getLastName())
+		        .username(user.getUsername())
+		        .email(user.getEmail())
+		        .phoneNumber(user.getPhoneNumber())
+		        .role(user.getRole())
+		        .build();
+		return AuthenticationResponse.builder()
+				.token(jwtToken)
+				.user(userDto)
+				.build();
 	}
 
 }
