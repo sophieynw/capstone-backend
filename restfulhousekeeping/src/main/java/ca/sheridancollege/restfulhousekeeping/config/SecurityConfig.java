@@ -32,7 +32,6 @@ public class SecurityConfig {
 	private AuthenticationProvider authenticationProvider;
 
 	@Bean
-	@Profile("!dev")
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		return http.authorizeHttpRequests(authorize -> authorize
 						.requestMatchers("/api/v1/auth/register", "/api/v1/auth/authenticate").permitAll()
