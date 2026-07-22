@@ -32,7 +32,6 @@ public class SecurityConfig {
 	private AuthenticationProvider authenticationProvider;
 
 	@Bean
-	@Profile("!dev")
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		return http.authorizeHttpRequests(authorize -> authorize
 						.requestMatchers("/api/v1/auth/register", "/api/v1/auth/authenticate").permitAll()
@@ -48,16 +47,4 @@ public class SecurityConfig {
 				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
 				.build();
 	}
-
-	@Bean
-	@Profile("dev")
-	public SecurityFilterChain bypassSecurityFilterChain(HttpSecurity http) {
-		http
-				.csrf(AbstractHttpConfigurer::disable)
-				.authorizeHttpRequests(auth -> auth
-						.anyRequest().permitAll()
-				);
-		return http.build();
-	}
-
 }
