@@ -54,40 +54,23 @@ public class BootstrapData implements CommandLineRunner {
 				.phoneNumber("6471231234")
 				.role(Role.MANAGER)
 				.build();
-		User manager2 = User.builder()
-				.firstName("Kaladin")
-				.lastName("Stormblessed")
-				.username("H1ghst0rm$")
-				.email("spears_and_storms#@gmail.com")
-				.password("NotAHashYet")
-				.phoneNumber("905-608-9000")
-				.role(Role.MANAGER)
-				.build();
 		User cleaner1 = User.builder()
-				.firstName("John")
-				.lastName("Smith")
-				.username("GenericUsername")
-				.email("bubblyfresh123@gmail.com")
-				.password("Password123")
-				.role(Role.CLEANER)
-				.build();
-		User cleaner2 = User.builder()
-				.firstName("Jane")
-				.lastName("Smith")
-				.username("GenericUsername")
-				.email("bubblyfresh456@gmail.com")
-				.password("Password456")
+				.firstName("Robert")
+				.lastName("Fleming")
+				.username("robert")
+				.email("robert@test.com")
+				.password(passwordEncoder.encode("password"))
 				.role(Role.CLEANER)
 				.build();
 		Property property1 = Property.builder()
 				.name("Wayward Pines")
-				.street("1234 ")
+				.street("1234")
 				.unit("123")
 				.city("Mississauga")
 				.province("Ontario")
 				.postalCode("L6D 7N4")
 				.country("Canada")
-				.accessInstructions("Just break in, honestly")
+				.accessInstructions("Door locked. Use key under mat.")
 				.build();
 		Cleaning cleaning1 = Cleaning.builder()
 				.dateTimeStart(LocalDateTime.of(2026, 7, 21, 8, 30))
@@ -110,14 +93,10 @@ public class BootstrapData implements CommandLineRunner {
 		// Managers
 		manager1.setOrganization(organization1);
 		manager1 = userRepository.save(manager1);
-		manager2.setOrganization(organization1);
-		manager2 = userRepository.save(manager2);
 		
 		//Cleaners
 		cleaner1.setOrganization(organization1);
 		cleaner1 = userRepository.save(cleaner1);
-		cleaner2.setOrganization(organization1);
-		cleaner2 = userRepository.save(cleaner2);
 		
 		//Properties
 		property1.setManager(manager1);
@@ -131,7 +110,7 @@ public class BootstrapData implements CommandLineRunner {
 		
 		//Availabilities
 		Availability availability1 = new Availability();
-		availability1.setCleaner(cleaner2);
+		availability1.setCleaner(cleaner1);
 		availability1 = availabilityRepository.save(availability1);
 		slot1.setAvailability(availability1);
 		slot2.setAvailability(availability1);
