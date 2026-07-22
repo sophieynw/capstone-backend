@@ -32,7 +32,7 @@ public class Cleaning {
 	@JoinColumn(name="cleanerId", nullable=false)
 	private User cleaner;
 	
-	@OneToOne
+	@ManyToOne
 	@JoinColumn(name="propertyId", nullable=false)
 	private Property property;
 	

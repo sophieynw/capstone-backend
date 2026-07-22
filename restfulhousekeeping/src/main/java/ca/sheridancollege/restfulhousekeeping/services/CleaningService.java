@@ -10,6 +10,7 @@ import ca.sheridancollege.restfulhousekeeping.beans.Role;
 import ca.sheridancollege.restfulhousekeeping.beans.User;
 import ca.sheridancollege.restfulhousekeeping.models.CleaningResponse;
 import ca.sheridancollege.restfulhousekeeping.repositories.CleaningRepository;
+import ca.sheridancollege.restfulhousekeeping.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 
 @Service
@@ -17,11 +18,14 @@ import lombok.AllArgsConstructor;
 public class CleaningService {
 
     private final CleaningRepository cleaningRepository;
+    private final UserRepository userRepository;
 
-    public List<CleaningResponse> getMyUpcomingCleanings(User user) {
+    public List<CleaningResponse> getMyUpcomingCleanings(Long userId) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         LocalDateTime now = LocalDateTime.now();
-
         List<Cleaning> cleanings;
 
         if (user.getRole() == Role.MANAGER) {

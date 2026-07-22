@@ -51,13 +51,13 @@ public class SecurityConfig {
 
 	@Bean
 	@Profile("dev")
-	public SecurityFilterChain bypassSecurityFilterChain(HttpSecurity http) {
-		http
-				.csrf(AbstractHttpConfigurer::disable)
-				.authorizeHttpRequests(auth -> auth
-						.anyRequest().permitAll()
-				);
-		return http.build();
+	public SecurityFilterChain bypassSecurityFilterChain(HttpSecurity http) throws Exception {
+	    return http
+	            .csrf(AbstractHttpConfigurer::disable)
+	            .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+	            .headers(headers -> headers
+	                    .frameOptions(frame -> frame.sameOrigin()))
+	            .build();
 	}
 
 }

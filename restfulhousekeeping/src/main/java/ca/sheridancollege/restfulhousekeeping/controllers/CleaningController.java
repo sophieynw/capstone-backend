@@ -31,12 +31,9 @@ public class CleaningController {
 
 	// Home Page API
 	// get all upcoming cleanings for signed-in user
-	@GetMapping("/my/upcoming")
-	public List<CleaningResponse> getMyUpcomingCleanings(Authentication authentication) {
-
-		User user = (User) authentication.getPrincipal();
-
-		return cleaningService.getMyUpcomingCleanings(user);
+	@GetMapping("/upcoming/{userId}")
+	public List<CleaningResponse> getMyUpcomingCleanings(@PathVariable Long userId) {
+		return cleaningService.getMyUpcomingCleanings(userId);
 	}
 
 	@GetMapping("/{id}")

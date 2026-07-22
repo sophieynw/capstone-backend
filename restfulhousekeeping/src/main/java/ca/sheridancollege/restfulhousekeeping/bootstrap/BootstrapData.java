@@ -89,10 +89,35 @@ public class BootstrapData implements CommandLineRunner {
 				.country("Canada")
 				.accessInstructions("Just break in, honestly")
 				.build();
+		Property property2 = Property.builder()
+				.name("Union St.")
+				.street("101 ")
+				.unit("292")
+				.city("Oakville")
+				.province("Ontario")
+				.postalCode("L4V 1V1")
+				.country("Canada")
+				.accessInstructions("Jump over the fence and take a right.")
+				.build();
 		Cleaning cleaning1 = Cleaning.builder()
 				.dateTimeStart(LocalDateTime.of(2026, 7, 21, 8, 30))
 				.dateTimeEnd(LocalDateTime.of(2026, 7, 21, 12, 30))
 				.notes("Large pile of asbestos found in toaster oven, bring mask.")
+				.build();
+		Cleaning cleaning2 = Cleaning.builder()
+				.dateTimeStart(LocalDateTime.of(2027, 7, 21, 8, 30))
+				.dateTimeEnd(LocalDateTime.of(2026, 7, 21, 12, 30))
+				.notes("Upcoming cleaning 1 with Manager = Sophie.")
+				.build();
+		Cleaning cleaning3 = Cleaning.builder()
+				.dateTimeStart(LocalDateTime.of(2028, 7, 21, 8, 30))
+				.dateTimeEnd(LocalDateTime.of(2026, 7, 21, 12, 30))
+				.notes("Upcoming cleaning 2 with Manager = Sophie.")
+				.build();
+		Cleaning cleaning4 = Cleaning.builder()
+				.dateTimeStart(LocalDateTime.of(2029, 7, 21, 8, 30))
+				.dateTimeEnd(LocalDateTime.of(2026, 7, 21, 12, 30))
+				.notes("Upcoming cleaning 3 with Manager = Sophie.")
 				.build();
 		AvailabilitySlot slot1 = AvailabilitySlot.builder()
 				.dayOfWeek(DayOfWeek.TUESDAY)
@@ -120,14 +145,28 @@ public class BootstrapData implements CommandLineRunner {
 		cleaner2 = userRepository.save(cleaner2);
 		
 		//Properties
-		property1.setManager(manager1);
+		property1.setManager(manager1); // sophie's property
 		property1 = propertyRepository.save(property1);
+		property2.setManager(manager1);
+		property2 = propertyRepository.save(property2);
 		
 		//Cleanings
 		cleaning1.setProperty(property1);
 		cleaning1.setCleaner(cleaner1);
 		cleaning1.setManager(manager1);
 		cleaning1 = cleaningRepository.save(cleaning1);
+		cleaning2.setProperty(property2);
+		cleaning2.setCleaner(cleaner1);
+		cleaning2.setManager(manager1);
+		cleaning2 = cleaningRepository.save(cleaning2);
+		cleaning3.setProperty(property2);
+		cleaning3.setCleaner(cleaner1);
+		cleaning3.setManager(manager1);
+		cleaning3 = cleaningRepository.save(cleaning3);
+		cleaning4.setProperty(property1);
+		cleaning4.setCleaner(cleaner1);
+		cleaning4.setManager(manager1);
+		cleaning4 = cleaningRepository.save(cleaning4);
 		
 		//Availabilities
 		Availability availability1 = new Availability();
