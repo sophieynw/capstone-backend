@@ -2,6 +2,7 @@ package ca.sheridancollege.restfulhousekeeping.bootstrap;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -9,13 +10,17 @@ import org.springframework.stereotype.Component;
 
 import ca.sheridancollege.restfulhousekeeping.beans.Availability;
 import ca.sheridancollege.restfulhousekeeping.beans.AvailabilitySlot;
+import ca.sheridancollege.restfulhousekeeping.beans.ChecklistItem;
 import ca.sheridancollege.restfulhousekeeping.beans.Cleaning;
+import ca.sheridancollege.restfulhousekeeping.beans.CleaningChecklistItem;
 import ca.sheridancollege.restfulhousekeeping.beans.DayOfWeek;
 import ca.sheridancollege.restfulhousekeeping.beans.Organization;
 import ca.sheridancollege.restfulhousekeeping.beans.Property;
 import ca.sheridancollege.restfulhousekeeping.beans.Role;
 import ca.sheridancollege.restfulhousekeeping.beans.User;
 import ca.sheridancollege.restfulhousekeeping.repositories.AvailabilityRepository;
+import ca.sheridancollege.restfulhousekeeping.repositories.ChecklistItemRepository;
+import ca.sheridancollege.restfulhousekeeping.repositories.CleaningChecklistItemRepository;
 import ca.sheridancollege.restfulhousekeeping.repositories.CleaningRepository;
 import ca.sheridancollege.restfulhousekeeping.repositories.OrganizationRepository;
 import ca.sheridancollege.restfulhousekeeping.repositories.PropertyRepository;
@@ -32,6 +37,8 @@ public class BootstrapData implements CommandLineRunner {
 	private final PropertyRepository propertyRepository;
 	private final CleaningRepository cleaningRepository;
 	private final AvailabilityRepository availabilityRepository;
+	private final ChecklistItemRepository checklistItemRepository;
+	private final CleaningChecklistItemRepository cleaningChecklistItemRepository;
 	private final SlotRepository slotRepository;
 	private final PasswordEncoder passwordEncoder;
 	
@@ -82,6 +89,8 @@ public class BootstrapData implements CommandLineRunner {
 				.country("Canada")
 				.accessInstructions("Jump over the fence and take a right.")
 				.build();
+		
+		// Cleanings
 		Cleaning cleaning1 = Cleaning.builder()
 				.dateTimeStart(LocalDateTime.of(2026, 7, 21, 8, 30))
 				.dateTimeEnd(LocalDateTime.of(2026, 7, 21, 12, 30))
@@ -146,6 +155,112 @@ public class BootstrapData implements CommandLineRunner {
 		cleaning4.setCleaner(cleaner1);
 		cleaning4.setManager(manager1);
 		cleaning4 = cleaningRepository.save(cleaning4);
+		
+		// Property 1 checklist items
+		ChecklistItem kitchen = ChecklistItem.builder()
+		        .property(property1)
+		        .description("Clean kitchen counters and sink")
+		        .frequencyDays(1)
+		        .build();
+		ChecklistItem bathroom = ChecklistItem.builder()
+		        .property(property1)
+		        .description("Clean and disinfect bathroom")
+		        .frequencyDays(1)
+		        .build();
+		ChecklistItem bedding = ChecklistItem.builder()
+		        .property(property1)
+		        .description("Change bed linens")
+		        .frequencyDays(1)
+		        .build();
+		ChecklistItem supplies = ChecklistItem.builder()
+		        .property(property1)
+		        .description("Check if any supplies need to be replaced")
+		        .frequencyDays(15)
+		        .build();
+		checklistItemRepository.saveAll(List.of(kitchen, bathroom, bedding, supplies));
+		
+		// Property 2 checklist items
+		ChecklistItem kitchen2 = ChecklistItem.builder()
+		        .property(property2)
+		        .description("Clean kitchen counters and sink")
+		        .frequencyDays(1)
+		        .build();
+		ChecklistItem bathroom2 = ChecklistItem.builder()
+		        .property(property2)
+		        .description("Clean and disinfect bathroom")
+		        .frequencyDays(1)
+		        .build();
+		ChecklistItem bedding2 = ChecklistItem.builder()
+		        .property(property2)
+		        .description("Change bed linens")
+		        .frequencyDays(1)
+		        .build();
+		ChecklistItem supplies2 = ChecklistItem.builder()
+		        .property(property2)
+		        .description("Check if any supplies need to be replaced")
+		        .frequencyDays(15)
+		        .build();
+		ChecklistItem hottub = ChecklistItem.builder()
+				.property(property2)
+				.description("Check water level in hot tub")
+				.frequencyDays(7)
+				.build();
+		checklistItemRepository.saveAll(List.of(kitchen2, bathroom2, bedding2, supplies2, hottub));
+		
+		//CleaningChecklistItems
+		CleaningChecklistItem cleaning1Kitchen = CleaningChecklistItem.builder()
+		        .cleaning(cleaning1)
+		        .checklistItem(kitchen)
+		        .isComplete(false)
+		        .build();
+
+		CleaningChecklistItem cleaning1Bathroom = CleaningChecklistItem.builder()
+		        .cleaning(cleaning1)
+		        .checklistItem(bathroom)
+		        .isComplete(false)
+		        .build();
+
+		CleaningChecklistItem cleaning1Bedding = CleaningChecklistItem.builder()
+		        .cleaning(cleaning1)
+		        .checklistItem(bedding)
+		        .isComplete(false)
+		        .build();
+
+		CleaningChecklistItem cleaning1Supplies = CleaningChecklistItem.builder()
+		        .cleaning(cleaning1)
+		        .checklistItem(supplies)
+		        .isComplete(false)
+		        .build();
+
+		cleaningChecklistItemRepository.saveAll(List.of(
+		        cleaning1Kitchen,
+		        cleaning1Bathroom,
+		        cleaning1Bedding,
+		        cleaning1Supplies
+		));
+		
+		cleaningChecklistItemRepository.saveAll(List.of(
+		        CleaningChecklistItem.builder()
+		                .cleaning(cleaning2)
+		                .checklistItem(kitchen2)
+		                .build(),
+		        CleaningChecklistItem.builder()
+		                .cleaning(cleaning2)
+		                .checklistItem(bathroom2)
+		                .build(),
+		        CleaningChecklistItem.builder()
+		                .cleaning(cleaning2)
+		                .checklistItem(bedding2)
+		                .build(),
+		        CleaningChecklistItem.builder()
+		                .cleaning(cleaning2)
+		                .checklistItem(supplies2)
+		                .build(),
+		        CleaningChecklistItem.builder()
+		                .cleaning(cleaning2)
+		                .checklistItem(hottub)
+		                .build()
+		));
 		
 		//Availabilities
 		Availability availability1 = new Availability();

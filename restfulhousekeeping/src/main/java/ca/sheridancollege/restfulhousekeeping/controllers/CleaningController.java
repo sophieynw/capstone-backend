@@ -17,7 +17,7 @@ import ca.sheridancollege.restfulhousekeeping.beans.Cleaning;
 import ca.sheridancollege.restfulhousekeeping.beans.User;
 import ca.sheridancollege.restfulhousekeeping.models.CleaningResponse;
 import ca.sheridancollege.restfulhousekeeping.repositories.CleaningRepository;
-import ca.sheridancollege.restfulhousekeeping.services.CleaningService;
+//import ca.sheridancollege.restfulhousekeeping.services.CleaningService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AllArgsConstructor;
 
@@ -27,14 +27,14 @@ import lombok.AllArgsConstructor;
 public class CleaningController {
 
 	private final CleaningRepository cleaningRepository;
-	private final CleaningService cleaningService;
+//	private final CleaningService cleaningService;
 
 	// Home Page API
 	// get all upcoming cleanings for signed-in user
-	@GetMapping("/upcoming/{userId}")
-	public List<CleaningResponse> getMyUpcomingCleanings(@PathVariable Long userId) {
-		return cleaningService.getMyUpcomingCleanings(userId);
-	}
+//	@GetMapping("/upcoming/{userId}")
+//	public List<CleaningResponse> getMyUpcomingCleanings(@PathVariable Long userId) {
+//		return cleaningService.getMyUpcomingCleanings(userId);
+//	}
 
 	@GetMapping("/{id}")
 	public ResponseEntity<Cleaning> getById(@PathVariable Long id) {
