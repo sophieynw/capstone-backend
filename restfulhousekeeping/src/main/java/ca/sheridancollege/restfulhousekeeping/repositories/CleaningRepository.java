@@ -13,12 +13,12 @@ public interface CleaningRepository extends JpaRepository<Cleaning,Long> {
 	
 	List<Cleaning> findByManagerIdAndDateTimeStartGreaterThanEqual(
 		    Long managerId,
-		    LocalDateTime dateTime
+		    LocalDateTime dateTimeStart
 		);
 	
 	List<Cleaning> findByCleanerIdAndDateTimeStartGreaterThanEqual(
 		    Long cleanerId,
-		    LocalDateTime dateTime
+		    LocalDateTime dateTimeStart
 		);
 	
 }

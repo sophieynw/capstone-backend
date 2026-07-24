@@ -3,7 +3,6 @@ package ca.sheridancollege.restfulhousekeeping.controllers;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,29 +13,26 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import ca.sheridancollege.restfulhousekeeping.beans.Cleaning;
-import ca.sheridancollege.restfulhousekeeping.beans.User;
 import ca.sheridancollege.restfulhousekeeping.models.CleaningResponse;
 import ca.sheridancollege.restfulhousekeeping.repositories.CleaningRepository;
-import ca.sheridancollege.restfulhousekeeping.services.CleaningService;
+import ca.sheridancollege.restfulhousekeeping.services.CleaningResponseService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AllArgsConstructor;
 
 @RestController
 @AllArgsConstructor
 @RequestMapping("/cleanings")
+@SecurityRequirement(name = "Bearer Authentication")
 public class CleaningController {
 
 	private final CleaningRepository cleaningRepository;
-	private final CleaningService cleaningService;
+	private final CleaningResponseService cleaningResponseService;
 
 	// Home Page API
-	// get all upcoming cleanings for signed-in user
-	@GetMapping("/my/upcoming")
-	public List<CleaningResponse> getMyUpcomingCleanings(Authentication authentication) {
-
-		User user = (User) authentication.getPrincipal();
-
-		return cleaningService.getMyUpcomingCleanings(user);
+	// GET all upcoming cleanings by userId
+	@GetMapping("/upcoming/{userId}")
+	public List<CleaningResponse> getMyUpcomingCleanings(@PathVariable Long userId) {
+		return cleaningResponseService.getMyUpcomingCleanings(userId);
 	}
 
 	@GetMapping("/{id}")

@@ -1,6 +1,7 @@
 package ca.sheridancollege.restfulhousekeeping.models;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,14 +13,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CleaningResponse {
-        private Long id;
-        private LocalDateTime dateTimeStart;
-        private LocalDateTime dateTimeEnd;
-        private LocalDateTime dateTimeStarted;
-        private LocalDateTime dateTimeEnded;
-        private String cleanerName;
-        private String propertyName;
-        private String address;
-        private String notes;
-        private Boolean isComplete;
+	
+	private Long id;
+	private Long managerId;
+	private Long cleanerId;
+	private Long propertyId;
+	private LocalDateTime dateTimeStart;
+	private LocalDateTime dateTimeEnd;
+	private LocalDateTime dateTimeStarted;
+	private LocalDateTime dateTimeCompleted;
+	private String notes;
+	private List<CleaningChecklistItemResponse> cleaningChecklistItemsResponse;
+	private Boolean isComplete;
+
 }
