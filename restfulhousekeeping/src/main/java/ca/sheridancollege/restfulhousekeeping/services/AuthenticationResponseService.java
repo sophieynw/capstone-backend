@@ -9,13 +9,13 @@ import ca.sheridancollege.restfulhousekeeping.beans.User;
 import ca.sheridancollege.restfulhousekeeping.models.AuthenticationRequest;
 import ca.sheridancollege.restfulhousekeeping.models.AuthenticationResponse;
 import ca.sheridancollege.restfulhousekeeping.models.RegisterRequest;
-import ca.sheridancollege.restfulhousekeeping.models.UserDto;
+import ca.sheridancollege.restfulhousekeeping.models.UserResponse;
 import ca.sheridancollege.restfulhousekeeping.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 
 @Service
 @AllArgsConstructor
-public class AuthenticationService {
+public class AuthenticationResponseService {
 	
 	private UserRepository userRepository;
 	private PasswordEncoder passwordEncoder;
@@ -36,7 +36,7 @@ public class AuthenticationService {
 				.build();
 		userRepository.save(user);
 		var jwtToken = jwtService.generateToken(user);
-		UserDto userDto = UserDto.builder()
+		UserResponse userResponse = UserResponse.builder()
 		        .id(user.getId())
 		        .organization(user.getOrganization())
 		        .firstName(user.getFirstName())
@@ -48,7 +48,7 @@ public class AuthenticationService {
 		        .build();
 		return AuthenticationResponse.builder()
 				.token(jwtToken)
-				.user(userDto)
+				.user(userResponse)
 				.build();
 	}
 	
@@ -58,7 +58,7 @@ public class AuthenticationService {
 				request.getUsername(), request.getPassword()));
 		User user = userRepository.findByUsername(request.getUsername()).orElseThrow();
 		var jwtToken = jwtService.generateToken(user);
-		UserDto userDto = UserDto.builder()
+		UserResponse userResponse = UserResponse.builder()
 		        .id(user.getId())
 		        .organization(user.getOrganization())
 		        .firstName(user.getFirstName())
@@ -70,7 +70,7 @@ public class AuthenticationService {
 		        .build();
 		return AuthenticationResponse.builder()
 				.token(jwtToken)
-				.user(userDto)
+				.user(userResponse)
 				.build();
 	}
 

@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -44,6 +46,7 @@ public class Cleaning {
 	private LocalDateTime dateTimeCompleted;
 	private String notes;
 	@OneToMany(mappedBy = "cleaning")
+	@JsonManagedReference
 	private List<CleaningChecklistItem> checklistItems = new ArrayList<>();
 	private Boolean isComplete;
 }

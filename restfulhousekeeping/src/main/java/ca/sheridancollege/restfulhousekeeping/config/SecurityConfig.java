@@ -13,6 +13,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import lombok.AllArgsConstructor;
 
@@ -46,17 +47,6 @@ public class SecurityConfig {
 				.authenticationProvider(authenticationProvider)
 				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
 				.build();
-	}
-
-	@Bean
-	@Profile("dev")
-	public SecurityFilterChain bypassSecurityFilterChain(HttpSecurity http) throws Exception {
-	    return http
-	            .csrf(AbstractHttpConfigurer::disable)
-	            .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
-	            .headers(headers -> headers
-	                    .frameOptions(frame -> frame.sameOrigin()))
-	            .build();
 	}
 
 }

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ca.sheridancollege.restfulhousekeeping.models.AuthenticationRequest;
 import ca.sheridancollege.restfulhousekeeping.models.AuthenticationResponse;
 import ca.sheridancollege.restfulhousekeeping.models.RegisterRequest;
-import ca.sheridancollege.restfulhousekeeping.services.AuthenticationService;
+import ca.sheridancollege.restfulhousekeeping.services.AuthenticationResponseService;
 import lombok.AllArgsConstructor;
 
 @RestController
@@ -17,18 +17,18 @@ import lombok.AllArgsConstructor;
 @RequestMapping("/api/v1/auth")
 public class AuthenticationController {
 	
-	private final AuthenticationService authenticationService;
+	private final AuthenticationResponseService authenticationResponseService;
 	
 	// map incoming POST requests to register a new user
 	@PostMapping(value = "/register", consumes = "application/json")
 	public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request) {
-		return ResponseEntity.ok(authenticationService.register(request));
+		return ResponseEntity.ok(authenticationResponseService.register(request));
 	}
 	
 	// map incoming POST requests to authenticate an existing user
 	@PostMapping(value = "/authenticate", consumes = "application/json")
 	public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
-		return ResponseEntity.ok(authenticationService.authenticate(request));
+		return ResponseEntity.ok(authenticationResponseService.authenticate(request));
 	}
 
 }

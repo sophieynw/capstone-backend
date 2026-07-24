@@ -1,5 +1,7 @@
 package ca.sheridancollege.restfulhousekeeping.beans;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -26,4 +28,6 @@ public class ChecklistItem {
 	
 	private String description;
 	private Integer frequencyDays;
+    private LocalDateTime lastCompleted;
+
 }

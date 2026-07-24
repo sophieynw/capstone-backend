@@ -1,5 +1,7 @@
 package ca.sheridancollege.restfulhousekeeping.beans;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -37,6 +39,7 @@ public class CleaningChecklistItem {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "checklistItemId", nullable = false)
+    @JsonBackReference
     private ChecklistItem checklistItem;
 
     @Builder.Default

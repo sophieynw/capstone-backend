@@ -1,5 +1,7 @@
 package ca.sheridancollege.restfulhousekeeping.models;
 
+import java.time.LocalDateTime;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,9 +11,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AuthenticationResponse {
+public class CleaningChecklistItemResponse {
 	
-	private String token;
-	private UserResponse user;
+	private Long id;
+	private String description;
+	private Integer frequencyDays;
+	private LocalDateTime lastCompleted;
+	private Boolean isComplete;
 
 }
