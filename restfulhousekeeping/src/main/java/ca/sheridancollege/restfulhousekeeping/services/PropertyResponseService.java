@@ -10,8 +10,6 @@ import org.springframework.stereotype.Service;
 
 import ca.sheridancollege.restfulhousekeeping.beans.Role;
 import ca.sheridancollege.restfulhousekeeping.beans.User;
-import ca.sheridancollege.restfulhousekeeping.models.CleaningResponse;
-import ca.sheridancollege.restfulhousekeeping.repositories.CleaningRepository;
 import ca.sheridancollege.restfulhousekeeping.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 

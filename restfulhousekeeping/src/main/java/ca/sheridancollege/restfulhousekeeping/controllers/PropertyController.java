@@ -3,7 +3,6 @@ package ca.sheridancollege.restfulhousekeeping.controllers;
 import java.util.List;
 
 import ca.sheridancollege.restfulhousekeeping.models.PropertyResponse;
-import ca.sheridancollege.restfulhousekeeping.services.CleaningResponseService;
 import ca.sheridancollege.restfulhousekeeping.services.PropertyResponseService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
