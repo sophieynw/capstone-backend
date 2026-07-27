@@ -2,6 +2,7 @@ package ca.sheridancollege.restfulhousekeeping.services;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -50,6 +51,13 @@ public class CleaningResponseService {
         		.map(this::toCleaningResponse)
         		.toList();
         
+    }
+
+    public CleaningResponse getFirstCleaningByProperty(Long propertyId) {
+        Cleaning cleaning;
+
+        cleaning = cleaningRepository.findFirstByPropertyIdOrderByDateTimeStartAsc(propertyId);
+        return toCleaningResponse(cleaning);
     }
     
     private CleaningResponse toCleaningResponse(Cleaning cleaning) {
