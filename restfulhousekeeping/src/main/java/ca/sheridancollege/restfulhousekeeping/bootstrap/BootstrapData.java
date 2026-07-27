@@ -81,7 +81,7 @@ public class BootstrapData implements CommandLineRunner {
 				.build();
 		Property property2 = Property.builder()
 				.name("Union St.")
-				.street("101 ")
+				.street("101")
 				.unit("292")
 				.city("Oakville")
 				.province("Ontario")

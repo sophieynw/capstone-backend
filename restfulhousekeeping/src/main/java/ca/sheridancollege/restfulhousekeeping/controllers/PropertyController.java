@@ -1,20 +1,26 @@
 package ca.sheridancollege.restfulhousekeeping.controllers;
 
 import java.util.List;
+
+import ca.sheridancollege.restfulhousekeeping.models.PropertyResponse;
+import ca.sheridancollege.restfulhousekeeping.services.PropertyResponseService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ca.sheridancollege.restfulhousekeeping.beans.Property;
 import ca.sheridancollege.restfulhousekeeping.repositories.PropertyRepository;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/properties")
 public class PropertyController {
 
     private final PropertyRepository propertyRepository;
+    private final PropertyResponseService propertyResponseService;
 
-    public PropertyController(PropertyRepository propertyRepository) {
-        this.propertyRepository = propertyRepository;
-    }
+//    public PropertyController(PropertyRepository propertyRepository) {
+//        this.propertyRepository = propertyRepository;
+//    }
 
     @GetMapping
     public List<Property> getAll() {
@@ -26,6 +32,12 @@ public class PropertyController {
         return propertyRepository.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    // Get ALL properties by userId
+    @GetMapping("/managers/{userId}")
+    public List<PropertyResponse> getPropertyByUserId(@PathVariable Long userId) {
+        return propertyResponseService.getPropertyByUserId(userId);
     }
 
     @PostMapping

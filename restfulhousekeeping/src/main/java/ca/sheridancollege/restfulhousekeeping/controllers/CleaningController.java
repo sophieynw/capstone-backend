@@ -35,6 +35,11 @@ public class CleaningController {
 		return cleaningResponseService.getMyUpcomingCleanings(userId);
 	}
 
+	@GetMapping("/upcoming/{propertyId}/first")
+	public CleaningResponse getNextCleaningByPropertyId(@PathVariable Long propertyId) {
+		return cleaningResponseService.getFirstCleaningByProperty(propertyId);
+	}
+
 	@GetMapping("/{id}")
 	public ResponseEntity<Cleaning> getById(@PathVariable Long id) {
 		return cleaningRepository.findById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
