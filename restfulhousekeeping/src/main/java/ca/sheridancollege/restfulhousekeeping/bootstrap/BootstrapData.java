@@ -67,6 +67,16 @@ public class BootstrapData implements CommandLineRunner {
 				.username("robert")
 				.email("robert@test.com")
 				.password(passwordEncoder.encode("password"))
+				.phoneNumber("9056083833")
+				.role(Role.CLEANER)
+				.build();
+		User cleaner2 = User.builder()
+				.firstName("Katie")
+				.lastName("McEwan")
+				.username("katie")
+				.email("katie@test.com")
+				.password(passwordEncoder.encode("password"))
+				.phoneNumber("2262240336")
 				.role(Role.CLEANER)
 				.build();
 		Property property1 = Property.builder()
@@ -131,6 +141,8 @@ public class BootstrapData implements CommandLineRunner {
 		//Cleaners
 		cleaner1.setOrganization(organization1);
 		cleaner1 = userRepository.save(cleaner1);
+		cleaner2.setOrganization(organization1);
+		cleaner2 = userRepository.save(cleaner2);
 		
 		//Properties
 		property1.setManager(manager1); // sophie's property
@@ -144,7 +156,7 @@ public class BootstrapData implements CommandLineRunner {
 		cleaning1.setManager(manager1);
 		cleaning1 = cleaningRepository.save(cleaning1);
 		cleaning2.setProperty(property2);
-		cleaning2.setCleaner(cleaner1);
+		cleaning2.setCleaner(cleaner2);
 		cleaning2.setManager(manager1);
 		cleaning2 = cleaningRepository.save(cleaning2);
 		cleaning3.setProperty(property2);
