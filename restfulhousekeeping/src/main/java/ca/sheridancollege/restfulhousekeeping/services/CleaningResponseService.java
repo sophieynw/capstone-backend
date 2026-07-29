@@ -71,7 +71,7 @@ public class CleaningResponseService {
                 .dateTimeStarted(cleaning.getDateTimeStarted())
                 .dateTimeCompleted(cleaning.getDateTimeCompleted())
                 .notes(cleaning.getNotes())
-                .cleaningChecklistItemsResponse(
+                .cleaningChecklistItems(
                         cciResponseService
                                 .getItemsForCleaning(cleaning.getId())
                 )

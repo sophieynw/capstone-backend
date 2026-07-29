@@ -23,7 +23,7 @@ public class CleaningResponse {
 	private LocalDateTime dateTimeStarted;
 	private LocalDateTime dateTimeCompleted;
 	private String notes;
-	private List<CleaningChecklistItemResponse> cleaningChecklistItemsResponse;
+	private List<CleaningChecklistItemResponse> cleaningChecklistItems;
 	private Boolean isComplete;
 
 }
