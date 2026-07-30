@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import ca.sheridancollege.restfulhousekeeping.beans.Role; 
 import ca.sheridancollege.restfulhousekeeping.beans.User;
+import ca.sheridancollege.restfulhousekeeping.models.UserResponse; 
 import ca.sheridancollege.restfulhousekeeping.repositories.UserRepository;
 
 @RestController
@@ -35,6 +37,23 @@ public class UserController {
         return userRepository.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+    
+    @GetMapping("/organization/{organizationId}")
+    public List<UserResponse> getCleanersByOrganization(@PathVariable Long organizationId) {
+        return userRepository.findByOrganizationIdAndRole(organizationId, Role.CLEANER)
+                .stream()
+                .map(user -> UserResponse.builder()
+                        .id(user.getId())
+                        .organization(user.getOrganization())
+                        .firstName(user.getFirstName())
+                        .lastName(user.getLastName())
+                        .username(user.getUsername())
+                        .email(user.getEmail())
+                        .phoneNumber(user.getPhoneNumber())
+                        .role(user.getRole())
+                        .build())
+                .toList();
     }
 
     @PostMapping
