@@ -79,4 +79,9 @@ public class CleaningResponseService {
                 .build();
     }
     
+    public CleaningResponse getCleaningResponseById(Long id) {
+        Cleaning cleaning = cleaningRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Cleaning not found"));
+        return toCleaningResponse(cleaning);
+    }
 }

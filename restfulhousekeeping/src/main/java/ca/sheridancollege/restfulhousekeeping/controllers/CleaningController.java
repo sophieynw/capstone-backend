@@ -13,7 +13,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import ca.sheridancollege.restfulhousekeeping.beans.Cleaning;
+import ca.sheridancollege.restfulhousekeeping.beans.ChecklistItem; 
+import ca.sheridancollege.restfulhousekeeping.beans.CleaningChecklistItem;
+import ca.sheridancollege.restfulhousekeeping.beans.Property; 
+import ca.sheridancollege.restfulhousekeeping.beans.User; 
 import ca.sheridancollege.restfulhousekeeping.models.CleaningResponse;
+import ca.sheridancollege.restfulhousekeeping.models.CreateCleaningRequest; 
+import ca.sheridancollege.restfulhousekeeping.repositories.ChecklistItemRepository; 
+import ca.sheridancollege.restfulhousekeeping.repositories.CleaningChecklistItemRepository; 
 import ca.sheridancollege.restfulhousekeeping.repositories.CleaningRepository;
 import ca.sheridancollege.restfulhousekeeping.services.CleaningResponseService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -27,6 +34,9 @@ public class CleaningController {
 
 	private final CleaningRepository cleaningRepository;
 	private final CleaningResponseService cleaningResponseService;
+	private final ChecklistItemRepository checklistItemRepository; 
+    private final CleaningChecklistItemRepository cleaningChecklistItemRepository; 
+
 
 	// Home Page API
 	// GET all upcoming cleanings by userId
@@ -46,8 +56,39 @@ public class CleaningController {
 	}
 
 	@PostMapping
-	public Cleaning create(@RequestBody Cleaning cleaning) {
-		return cleaningRepository.save(cleaning);
+	public ResponseEntity<CleaningResponse> create(@RequestBody CreateCleaningRequest request) {
+	    User manager = new User();
+	    manager.setId(request.getManagerId());
+
+	    User cleaner = new User();
+	    cleaner.setId(request.getCleanerId());
+
+	    Property property = new Property();
+	    property.setId(request.getPropertyId());
+
+	    Cleaning cleaning = Cleaning.builder()
+	            .manager(manager)
+	            .cleaner(cleaner)
+	            .property(property)
+	            .dateTimeStart(request.getDateTimeStart())
+	            .dateTimeEnd(request.getDateTimeEnd())
+	            .notes(request.getNotes())
+	            .isComplete(false)
+	            .build();
+
+	    Cleaning saved = cleaningRepository.save(cleaning);
+
+	    List<ChecklistItem> propertyItems = checklistItemRepository.findByPropertyId(saved.getProperty().getId());
+	    for (ChecklistItem item : propertyItems) {
+	        CleaningChecklistItem cci = CleaningChecklistItem.builder()
+	                .cleaning(saved)
+	                .checklistItem(item)
+	                .isComplete(false)
+	                .build();
+	        cleaningChecklistItemRepository.save(cci);
+	    }
+
+	    return ResponseEntity.ok(cleaningResponseService.getCleaningResponseById(saved.getId()));
 	}
 
 	@PutMapping("/{id}")
