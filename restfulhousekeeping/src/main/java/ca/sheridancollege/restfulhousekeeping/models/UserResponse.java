@@ -2,6 +2,7 @@ package ca.sheridancollege.restfulhousekeeping.models;
 
 import ca.sheridancollege.restfulhousekeeping.beans.Organization;
 import ca.sheridancollege.restfulhousekeeping.beans.Role;
+import ca.sheridancollege.restfulhousekeeping.beans.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,5 +22,19 @@ public class UserResponse {
     private String email;
     private String phoneNumber;
     private Role role;
+    
+    public static UserResponse from(User user) {
+    	return new UserResponse(
+            user.getId(),
+            user.getOrganization(),
+            user.getFirstName(),
+            user.getLastName(),
+            user.getUsername(),
+            user.getEmail(),
+            user.getPhoneNumber(),
+            user.getRole()
+        );
+
+    }
 
 }
