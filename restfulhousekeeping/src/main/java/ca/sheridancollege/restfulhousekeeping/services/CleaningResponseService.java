@@ -64,7 +64,11 @@ public class CleaningResponseService {
     	return CleaningResponse.builder()
     			.id(cleaning.getId())
     			.managerId(cleaning.getManager().getId())
-    			.cleanerId(cleaning.getCleaner().getId())
+    			.cleanerId(
+					cleaning.getCleaner() == null
+						? null
+						: cleaning.getCleaner().getId()
+    			)
     			.propertyId(cleaning.getProperty().getId())
     			.dateTimeStart(cleaning.getDateTimeStart())
                 .dateTimeEnd(cleaning.getDateTimeEnd())

@@ -33,7 +33,7 @@ public class Cleaning {
 	private User manager;
 	
 	@ManyToOne
-	@JoinColumn(name="cleanerId", nullable=false)
+	@JoinColumn(name="cleanerId")
 	private User cleaner;
 	
 	@ManyToOne

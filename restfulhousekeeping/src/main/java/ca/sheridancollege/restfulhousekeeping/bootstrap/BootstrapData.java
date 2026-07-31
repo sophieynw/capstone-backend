@@ -1,8 +1,11 @@
 package ca.sheridancollege.restfulhousekeeping.bootstrap;
 
+import java.time.LocalDate;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -107,18 +110,18 @@ public class BootstrapData implements CommandLineRunner {
 				.notes("Large pile of asbestos found in toaster oven, bring mask.")
 				.build();
 		Cleaning cleaning2 = Cleaning.builder()
-				.dateTimeStart(LocalDateTime.of(2027, 7, 21, 8, 30))
-				.dateTimeEnd(LocalDateTime.of(2026, 7, 21, 12, 30))
+				.dateTimeStart(LocalDateTime.of(2026, 7, 31, 12, 30))
+				.dateTimeEnd(LocalDateTime.of(2026, 7, 31, 14, 30))
 				.notes("Upcoming cleaning 1 with Manager = Sophie.")
 				.build();
 		Cleaning cleaning3 = Cleaning.builder()
-				.dateTimeStart(LocalDateTime.of(2028, 7, 21, 8, 30))
-				.dateTimeEnd(LocalDateTime.of(2026, 7, 21, 12, 30))
+				.dateTimeStart(LocalDateTime.of(2026, 7, 31, 12, 30))
+				.dateTimeEnd(LocalDateTime.of(2026, 7, 31, 14, 30))
 				.notes("Upcoming cleaning 2 with Manager = Sophie.")
 				.build();
 		Cleaning cleaning4 = Cleaning.builder()
-				.dateTimeStart(LocalDateTime.of(2029, 7, 21, 8, 30))
-				.dateTimeEnd(LocalDateTime.of(2026, 7, 21, 12, 30))
+				.dateTimeStart(LocalDateTime.of(2026, 7, 31, 12, 30))
+				.dateTimeEnd(LocalDateTime.of(2026, 7, 31, 14, 30))
 				.notes("Upcoming cleaning 3 with Manager = Sophie.")
 				.build();
 		AvailabilitySlot slot1 = AvailabilitySlot.builder()
@@ -283,5 +286,80 @@ public class BootstrapData implements CommandLineRunner {
 		slot1 = slotRepository.save(slot1);
 		slot2 = slotRepository.save(slot2);
 		
+		// Generate 30 cleanings over the next two weeks
+		LocalDate today = LocalDate.now();
+		ThreadLocalRandom random = ThreadLocalRandom.current();
+
+		List<Property> properties = List.of(property1, property2);
+		List<User> cleaners = List.of(cleaner1, cleaner2);
+
+		for (int i = 0; i < 30; i++) {
+			// Random date from tomorrow through 14 days from today
+			LocalDate cleaningDay = today.plusDays(random.nextInt(1, 15));
+
+			// Random start time between 8:00 AM and 4:30 PM
+			int hour = random.nextInt(8, 17);
+			int minute = random.nextBoolean() ? 0 : 30;
+
+			LocalDateTime start = cleaningDay.atTime(hour, minute);
+			LocalDateTime end = start.plusHours(random.nextInt(2, 5));
+
+			Cleaning cleaning = Cleaning.builder()
+					.dateTimeStart(start)
+					.dateTimeEnd(end)
+					.notes("Automatically generated cleaning " + (i + 1))
+					.build();
+
+			// Alternate between the two existing properties
+			cleaning.setProperty(properties.get(i % properties.size()));
+			cleaning.setManager(manager1);
+
+			// Assign 20 cleanings and leave every third cleaning unassigned
+			if (i % 3 != 0) {
+				cleaning.setCleaner(
+						cleaners.get(random.nextInt(cleaners.size()))
+				);
+			}
+
+			cleaningRepository.save(cleaning);
+		}
+		
+		// Generate 5 cleanings for today
+		LocalDate currentDate = LocalDate.now();
+		ThreadLocalRandom todayRandom = ThreadLocalRandom.current();
+
+		List<Property> todayProperties = List.of(property1, property2);
+		List<User> availableCleaners = List.of(cleaner1, cleaner2);
+
+		for (int i = 0; i < 5; i++) {
+			// Random start between 8:00 AM and 5:30 PM
+			int hour = todayRandom.nextInt(8, 18);
+			int minute = todayRandom.nextBoolean() ? 0 : 30;
+
+			LocalDateTime start = currentDate.atTime(hour, minute);
+			LocalDateTime end = start.plusHours(todayRandom.nextInt(2, 4));
+
+			Cleaning cleaning = Cleaning.builder()
+					.dateTimeStart(start)
+					.dateTimeEnd(end)
+					.notes("Automatically generated cleaning for today " + (i + 1))
+					.build();
+
+			cleaning.setProperty(
+					todayProperties.get(i % todayProperties.size())
+			);
+			cleaning.setManager(manager1);
+
+			// Assign cleanings 1, 3, and 5; leave 2 and 4 unassigned
+			if (i % 2 == 0) {
+				cleaning.setCleaner(
+						availableCleaners.get(
+								todayRandom.nextInt(availableCleaners.size())
+						)
+				);
+			}
+
+			cleaningRepository.save(cleaning);
+		}
 	}
 }
