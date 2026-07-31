@@ -1,26 +1,34 @@
-//package ca.sheridancollege.restfulhousekeeping.controllers;
-//
-//import java.util.List;
-//import org.springframework.http.ResponseEntity;
-//import org.springframework.web.bind.annotation.*;
-//import ca.sheridancollege.restfulhousekeeping.beans.ChecklistItem;
-//import ca.sheridancollege.restfulhousekeeping.repositories.ChecklistItemRepository;
-//
-//@RestController
-//@RequestMapping("/checklist-items")
-//public class ChecklistItemController {
-//
-//    private final ChecklistItemRepository checklistItemRepository;
-//
-//    public ChecklistItemController(ChecklistItemRepository checklistItemRepository) {
-//        this.checklistItemRepository = checklistItemRepository;
-//    }
-//
-//    @GetMapping
-//    public List<ChecklistItem> getAll() {
-//        return checklistItemRepository.findAll();
-//    }
-//
+package ca.sheridancollege.restfulhousekeeping.controllers;
+
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import ca.sheridancollege.restfulhousekeeping.beans.ChecklistItem;
+import ca.sheridancollege.restfulhousekeeping.repositories.ChecklistItemRepository;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import lombok.AllArgsConstructor;
+
+@RestController
+@RequestMapping("/checklist-items")
+@AllArgsConstructor
+@SecurityRequirement(name = "Bearer Authentication")
+public class ChecklistItemController {
+
+    private final ChecklistItemRepository checklistItemRepository;
+    
+    @GetMapping("/{propertyId}")
+    public ResponseEntity<List<ChecklistItem>> getChecklistItems(@PathVariable Long propertyId) {
+    	List<ChecklistItem> items = checklistItemRepository.findAllByProperty_Id(propertyId);
+    	return ResponseEntity.ok(items);
+    }
+    
+
+
 //    @GetMapping("/{id}")
 //    public ResponseEntity<ChecklistItem> getById(@PathVariable Long id) {
 //        return checklistItemRepository.findById(id)
@@ -50,4 +58,4 @@
 //        checklistItemRepository.deleteById(id);
 //        return ResponseEntity.noContent().build();
 //    }
-//}
+}

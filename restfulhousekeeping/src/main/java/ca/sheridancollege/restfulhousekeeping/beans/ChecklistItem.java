@@ -2,6 +2,8 @@ package ca.sheridancollege.restfulhousekeeping.beans;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,6 +26,7 @@ public class ChecklistItem {
 	private Long id;
 	@ManyToOne
 	@JoinColumn(name="propertyId", nullable=false)
+	@JsonIgnore
 	private Property property;
 	
 	private String description;
