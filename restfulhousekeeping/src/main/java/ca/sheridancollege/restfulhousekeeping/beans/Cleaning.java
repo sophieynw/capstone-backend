@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -45,8 +46,12 @@ public class Cleaning {
 	private LocalDateTime dateTimeStarted;
 	private LocalDateTime dateTimeCompleted;
 	private String notes;
-	@OneToMany(mappedBy = "cleaning")
+	@OneToMany(
+		    mappedBy = "cleaning",
+		    cascade = CascadeType.ALL,
+		    orphanRemoval = true
+		)
 	@JsonManagedReference
-	private List<CleaningChecklistItem> checklistItems = new ArrayList<>();
+	private List<CleaningChecklistItem> cleaningChecklistItems = new ArrayList<>();
 	private Boolean isComplete;
 }

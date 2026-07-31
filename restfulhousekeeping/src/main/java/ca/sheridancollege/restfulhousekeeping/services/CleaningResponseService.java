@@ -60,7 +60,7 @@ public class CleaningResponseService {
         return toCleaningResponse(cleaning);
     }
     
-    private CleaningResponse toCleaningResponse(Cleaning cleaning) {
+    public CleaningResponse toCleaningResponse(Cleaning cleaning) {
     	return CleaningResponse.builder()
     			.id(cleaning.getId())
     			.managerId(cleaning.getManager().getId())
@@ -82,5 +82,7 @@ public class CleaningResponseService {
                 .isComplete(cleaning.getIsComplete())
                 .build();
     }
+    
+    
     
 }

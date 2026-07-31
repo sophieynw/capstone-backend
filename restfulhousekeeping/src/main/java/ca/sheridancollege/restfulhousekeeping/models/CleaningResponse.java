@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CleaningResponse {
-	
+		
 	private Long id;
 	private Long managerId;
 	private Long cleanerId;

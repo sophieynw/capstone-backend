@@ -38,7 +38,7 @@ public class UserController {
     public ResponseEntity<List<UserResponse>> getCleaners(@PathVariable Long organizationId) {
     	List<UserResponse> cleaners = userRepository
     			.findAllByOrganization_IdAndRole(organizationId, Role.CLEANER)
-    			.stream().map(UserResponse::from).toList();
+    			.stream().map(UserResponse::fromUser).toList();
     	return ResponseEntity.ok(cleaners);
     }
 

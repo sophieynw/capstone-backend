@@ -23,7 +23,7 @@ public class UserResponse {
     private String phoneNumber;
     private Role role;
     
-    public static UserResponse from(User user) {
+    public static UserResponse fromUser(User user) {
     	return new UserResponse(
             user.getId(),
             user.getOrganization(),

@@ -2,6 +2,7 @@ package ca.sheridancollege.restfulhousekeeping.controllers;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,8 +13,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import ca.sheridancollege.restfulhousekeeping.beans.ChecklistItem;
 import ca.sheridancollege.restfulhousekeeping.beans.Cleaning;
 import ca.sheridancollege.restfulhousekeeping.models.CleaningResponse;
+import ca.sheridancollege.restfulhousekeeping.repositories.ChecklistItemRepository;
 import ca.sheridancollege.restfulhousekeeping.repositories.CleaningRepository;
 import ca.sheridancollege.restfulhousekeeping.services.CleaningResponseService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -27,6 +30,7 @@ public class CleaningController {
 
 	private final CleaningRepository cleaningRepository;
 	private final CleaningResponseService cleaningResponseService;
+	private final ChecklistItemRepository checklistItemRepository;
 
 	// Home Page API
 	// GET all upcoming cleanings by userId
@@ -46,8 +50,39 @@ public class CleaningController {
 	}
 
 	@PostMapping
-	public Cleaning create(@RequestBody Cleaning cleaning) {
-		return cleaningRepository.save(cleaning);
+	public ResponseEntity<CleaningResponse> create(@RequestBody Cleaning cleaning) {
+
+	    cleaning.setId(null);
+	    cleaning.setIsComplete(false);
+	    cleaning.setDateTimeStarted(null);
+	    cleaning.setDateTimeCompleted(null);
+
+	    cleaning.getCleaningChecklistItems().forEach(item -> {
+	        item.setId(null);
+	        item.setCleaning(cleaning);
+	        item.setIsComplete(false);
+
+	        if (item.getChecklistItem() != null) {
+	            Long checklistItemId =
+	                    item.getChecklistItem().getId();
+
+	            ChecklistItem existingChecklistItem =
+	                    checklistItemRepository.findById(checklistItemId)
+	                            .orElseThrow(() ->
+	                                    new RuntimeException(
+	                                            "Checklist item not found: "
+	                                                    + checklistItemId
+	                                    )
+	                            );
+
+	            item.setChecklistItem(existingChecklistItem);
+	        }
+	    });
+	    
+	    Cleaning savedCleaning = cleaningRepository.save(cleaning);
+	    CleaningResponse cleaningResponse = cleaningResponseService.toCleaningResponse(savedCleaning);
+
+	    return ResponseEntity.status(HttpStatus.CREATED).body(cleaningResponse);
 	}
 
 	@PutMapping("/{id}")
