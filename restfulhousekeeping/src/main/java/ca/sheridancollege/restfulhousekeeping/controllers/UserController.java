@@ -12,29 +12,34 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import ca.sheridancollege.restfulhousekeeping.beans.Role;
 import ca.sheridancollege.restfulhousekeeping.beans.User;
+import ca.sheridancollege.restfulhousekeeping.models.UserResponse;
 import ca.sheridancollege.restfulhousekeeping.repositories.UserRepository;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import lombok.AllArgsConstructor;
 
 @RestController
 @RequestMapping("/cleaners")
+@AllArgsConstructor
+@SecurityRequirement(name = "Bearer Authentication")
 public class UserController {
 
     private final UserRepository userRepository;
-
-    public UserController(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
-    @GetMapping
-    public List<User> getAll() {
-        return userRepository.findAll();
-    }
 
     @GetMapping("/{id}")
     public ResponseEntity<User> getById(@PathVariable Long id) {
         return userRepository.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+    
+    @GetMapping("/{organizationId}/cleaners")
+    public ResponseEntity<List<UserResponse>> getCleaners(@PathVariable Long organizationId) {
+    	List<UserResponse> cleaners = userRepository
+    			.findAllByOrganization_IdAndRole(organizationId, Role.CLEANER)
+    			.stream().map(UserResponse::fromUser).toList();
+    	return ResponseEntity.ok(cleaners);
     }
 
     @PostMapping

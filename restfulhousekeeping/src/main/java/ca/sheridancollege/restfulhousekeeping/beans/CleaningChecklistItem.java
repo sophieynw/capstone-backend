@@ -35,12 +35,13 @@ public class CleaningChecklistItem {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "cleaningId", nullable = false)
+    @JsonBackReference
     private Cleaning cleaning;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "checklistItemId", nullable = false)
-    @JsonBackReference
+    @ManyToOne
+    @JoinColumn(name = "checklistItemId")
     private ChecklistItem checklistItem;
+    private String customDescription;
 
     @Builder.Default
     private Boolean isComplete = false;

@@ -53,18 +53,23 @@ public class CleaningResponseService {
         
     }
 
-    public CleaningResponse getFirstCleaningByProperty(Long propertyId) {
-        Cleaning cleaning;
-
-        cleaning = cleaningRepository.findFirstByPropertyIdOrderByDateTimeStartAsc(propertyId);
-        return toCleaningResponse(cleaning);
+    public Optional<CleaningResponse> getFirstCleaningByProperty(Long propertyId) {
+        return cleaningRepository.findFirstByPropertyIdAndDateTimeStartGreaterThanEqualOrderByDateTimeStartAsc(
+        		propertyId,
+        		LocalDateTime.now()
+        	)
+        		.map(this::toCleaningResponse);
     }
     
-    private CleaningResponse toCleaningResponse(Cleaning cleaning) {
+    public CleaningResponse toCleaningResponse(Cleaning cleaning) {
     	return CleaningResponse.builder()
     			.id(cleaning.getId())
     			.managerId(cleaning.getManager().getId())
-    			.cleanerId(cleaning.getCleaner().getId())
+    			.cleanerId(
+					cleaning.getCleaner() == null
+						? null
+						: cleaning.getCleaner().getId()
+    			)
     			.propertyId(cleaning.getProperty().getId())
     			.dateTimeStart(cleaning.getDateTimeStart())
                 .dateTimeEnd(cleaning.getDateTimeEnd())
@@ -78,5 +83,7 @@ public class CleaningResponseService {
                 .isComplete(cleaning.getIsComplete())
                 .build();
     }
+    
+    
     
 }

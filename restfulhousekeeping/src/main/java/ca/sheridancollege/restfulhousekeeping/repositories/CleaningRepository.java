@@ -21,5 +21,10 @@ public interface CleaningRepository extends JpaRepository<Cleaning,Long> {
 		    Long cleanerId,
 		    LocalDateTime dateTimeStart
 		);
-	Cleaning findFirstByPropertyIdOrderByDateTimeStartAsc(Long propertyId);
+	
+	Optional<Cleaning> findFirstByPropertyIdAndDateTimeStartGreaterThanEqualOrderByDateTimeStartAsc(
+	    Long propertyId,
+	    LocalDateTime dateTimeStart
+	);
+	
 }
