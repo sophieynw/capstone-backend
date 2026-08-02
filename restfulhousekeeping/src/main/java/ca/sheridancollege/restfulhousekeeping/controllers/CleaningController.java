@@ -32,16 +32,20 @@ public class CleaningController {
 	private final CleaningResponseService cleaningResponseService;
 	private final ChecklistItemRepository checklistItemRepository;
 
-	// Home Page API
+	// Dashboard Page API
 	// GET all upcoming cleanings by userId
 	@GetMapping("/upcoming/{userId}")
 	public List<CleaningResponse> getMyUpcomingCleanings(@PathVariable Long userId) {
 		return cleaningResponseService.getMyUpcomingCleanings(userId);
 	}
 
+	// 
 	@GetMapping("/upcoming/{propertyId}/first")
-	public CleaningResponse getNextCleaningByPropertyId(@PathVariable Long propertyId) {
-		return cleaningResponseService.getFirstCleaningByProperty(propertyId);
+	public ResponseEntity<CleaningResponse> getNextCleaningByPropertyId(@PathVariable Long propertyId) {
+		return cleaningResponseService
+				.getFirstCleaningByProperty(propertyId)
+				.map(ResponseEntity::ok)
+				.orElseGet(() -> ResponseEntity.noContent().build());
 	}
 
 	@GetMapping("/{id}")

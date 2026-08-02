@@ -53,11 +53,12 @@ public class CleaningResponseService {
         
     }
 
-    public CleaningResponse getFirstCleaningByProperty(Long propertyId) {
-        Cleaning cleaning;
-
-        cleaning = cleaningRepository.findFirstByPropertyIdOrderByDateTimeStartAsc(propertyId);
-        return toCleaningResponse(cleaning);
+    public Optional<CleaningResponse> getFirstCleaningByProperty(Long propertyId) {
+        return cleaningRepository.findFirstByPropertyIdAndDateTimeStartGreaterThanEqualOrderByDateTimeStartAsc(
+        		propertyId,
+        		LocalDateTime.now()
+        	)
+        		.map(this::toCleaningResponse);
     }
     
     public CleaningResponse toCleaningResponse(Cleaning cleaning) {
