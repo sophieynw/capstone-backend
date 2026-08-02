@@ -131,7 +131,7 @@ public class BootstrapData implements CommandLineRunner {
 			    .province("Ontario")
 			    .postalCode("L6D 7N4")
 			    .country("Canada")
-			    .accessInstructions("Door locked. Use key under mat.")
+			    .accessInstructions("Lockbox code - 1234. Use the south entrance.")
 			    .build();
 		Property property2 = Property.builder()
 				.manager(manager1)
@@ -155,7 +155,7 @@ public class BootstrapData implements CommandLineRunner {
 			    .postalCode("L7M 2P8")
 			    .country("Canada")
 			    .accessInstructions(
-			        "Use the side entrance. Lockbox is attached to the railing."
+			        "Keypad code - 7722."
 			    )
 			    .build();
 		Property property4 = Property.builder()
@@ -181,7 +181,7 @@ public class BootstrapData implements CommandLineRunner {
 			    .postalCode("M5H 1J9")
 			    .country("Canada")
 			    .accessInstructions(
-			        "Enter through the west lobby. The access code is in the booking notes."
+			        "Keypad code - 54321. Enter through the west lobby."
 			    )
 			    .build();
 		property1 = propertyRepository.save(property1);
@@ -249,16 +249,26 @@ public class BootstrapData implements CommandLineRunner {
 		
 
 		
-		// Cleanings
-		Cleaning cleaning1 = Cleaning.builder().dateTimeStart(LocalDateTime.of(2026, 7, 21, 8, 30))
-				.dateTimeEnd(LocalDateTime.of(2026, 7, 21, 12, 30))
-				.notes("Large pile of asbestos found in toaster oven, bring mask.").build();
-		Cleaning cleaning2 = Cleaning.builder().dateTimeStart(LocalDateTime.of(2026, 7, 31, 12, 30))
-				.dateTimeEnd(LocalDateTime.of(2026, 7, 31, 14, 30)).notes("Upcoming cleaning 1 with Manager = Sophie.")
-				.build();
-		Cleaning cleaning3 = Cleaning.builder().dateTimeStart(LocalDateTime.of(2026, 7, 31, 12, 30))
-				.dateTimeEnd(LocalDateTime.of(2026, 7, 31, 14, 30)).notes("Upcoming cleaning 2 with Manager = Sophie.")
-				.build();
+		// Cleanings		
+		LocalDateTime todayAt1159Pm = LocalDate.now().atTime(23, 59);
+
+		Cleaning cleaning1 = Cleaning.builder()
+		        .dateTimeStart(todayAt1159Pm)
+		        .dateTimeEnd(todayAt1159Pm.plusHours(2))
+		        .notes("Upcoming cleaning 1.")
+		        .build();
+
+		Cleaning cleaning2 = Cleaning.builder()
+		        .dateTimeStart(todayAt1159Pm)
+		        .dateTimeEnd(todayAt1159Pm.plusHours(2))
+		        .notes("Upcoming cleaning 2.")
+		        .build();
+
+		Cleaning cleaning3 = Cleaning.builder()
+		        .dateTimeStart(todayAt1159Pm)
+		        .dateTimeEnd(todayAt1159Pm.plusHours(2))
+		        .notes("Upcoming cleaning 3.")
+		        .build();
 		Cleaning cleaning4 = Cleaning.builder().dateTimeStart(LocalDateTime.of(2026, 7, 31, 12, 30))
 				.dateTimeEnd(LocalDateTime.of(2026, 7, 31, 14, 30)).notes("Upcoming cleaning 3 with Manager = Sophie.")
 				.build();
@@ -359,25 +369,46 @@ public class BootstrapData implements CommandLineRunner {
 		List<User> availableCleaners = List.of(cleaner1, cleaner2);
 
 		for (int i = 0; i < 5; i++) {
-			// Random start between 8:00 AM and 5:30 PM
-			int hour = todayRandom.nextInt(8, 18);
-			int minute = todayRandom.nextBoolean() ? 0 : 30;
+		    // Duration is either 2 or 3 hours
+		    int durationHours = todayRandom.nextInt(2, 4);
 
-			LocalDateTime start = currentDate.atTime(hour, minute);
-			LocalDateTime end = start.plusHours(todayRandom.nextInt(2, 4));
+		    int earliestStartMinutes = 8 * 60;
+		    int latestStartMinutes = (24 - durationHours) * 60;
 
-			Cleaning cleaning = Cleaning.builder().dateTimeStart(start).dateTimeEnd(end)
-					.notes("Automatically generated cleaning for today " + (i + 1)).build();
+		    // Number of available 30-minute start slots, including the last slot
+		    int slotCount =
+		            ((latestStartMinutes - earliestStartMinutes) / 30) + 1;
 
-			cleaning.setProperty(todayProperties.get(i % todayProperties.size()));
-			cleaning.setManager(manager1);
+		    int startMinutes =
+		            earliestStartMinutes + todayRandom.nextInt(slotCount) * 30;
 
-			// Assign cleanings 1, 3, and 5; leave 2 and 4 unassigned
-			if (i % 2 == 0) {
-				cleaning.setCleaner(availableCleaners.get(todayRandom.nextInt(availableCleaners.size())));
-			}
+		    int hour = startMinutes / 60;
+		    int minute = startMinutes % 60;
 
-			cleaningRepository.save(cleaning);
+		    LocalDateTime start = currentDate.atTime(hour, minute);
+		    LocalDateTime end = start.plusHours(durationHours);
+
+		    Cleaning cleaning = Cleaning.builder()
+		            .dateTimeStart(start)
+		            .dateTimeEnd(end)
+		            .notes("Automatically generated cleaning for today " + (i + 1))
+		            .build();
+
+		    cleaning.setProperty(
+		            todayProperties.get(i % todayProperties.size())
+		    );
+		    cleaning.setManager(manager1);
+
+		    // Assign cleanings 1, 3, and 5; leave 2 and 4 unassigned
+		    if (i % 2 == 0) {
+		        cleaning.setCleaner(
+		                availableCleaners.get(
+		                        todayRandom.nextInt(availableCleaners.size())
+		                )
+		        );
+		    }
+
+		    cleaningRepository.save(cleaning);
 		}
 	}
 }
