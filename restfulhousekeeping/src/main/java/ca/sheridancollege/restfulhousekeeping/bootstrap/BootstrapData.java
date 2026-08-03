@@ -251,22 +251,23 @@ public class BootstrapData implements CommandLineRunner {
 		
 		// Cleanings		
 		LocalDateTime todayAt1159Pm = LocalDate.now().atTime(23, 59);
+		LocalDateTime oneHourFromNow = LocalDateTime.now().plusHours(1);
 
 		Cleaning cleaning1 = Cleaning.builder()
-		        .dateTimeStart(todayAt1159Pm)
-		        .dateTimeEnd(todayAt1159Pm.plusHours(2))
+		        .dateTimeStart(oneHourFromNow)
+		        .dateTimeEnd(oneHourFromNow.plusHours(2))
 		        .notes("Upcoming cleaning 1.")
 		        .build();
 
 		Cleaning cleaning2 = Cleaning.builder()
-		        .dateTimeStart(todayAt1159Pm)
-		        .dateTimeEnd(todayAt1159Pm.plusHours(2))
+		        .dateTimeStart(oneHourFromNow)
+		        .dateTimeEnd(oneHourFromNow.plusHours(2))
 		        .notes("Upcoming cleaning 2.")
 		        .build();
 
 		Cleaning cleaning3 = Cleaning.builder()
-		        .dateTimeStart(todayAt1159Pm)
-		        .dateTimeEnd(todayAt1159Pm.plusHours(2))
+		        .dateTimeStart(oneHourFromNow)
+		        .dateTimeEnd(oneHourFromNow.plusHours(2))
 		        .notes("Upcoming cleaning 3.")
 		        .build();
 		Cleaning cleaning4 = Cleaning.builder().dateTimeStart(LocalDateTime.of(2026, 7, 31, 12, 30))
@@ -328,14 +329,14 @@ public class BootstrapData implements CommandLineRunner {
 		slot1 = slotRepository.save(slot1);
 		slot2 = slotRepository.save(slot2);
 
-		// Generate 30 cleanings over the next two weeks
+		// Generate 10 cleanings over the next two weeks
 		LocalDate today = LocalDate.now();
 		ThreadLocalRandom random = ThreadLocalRandom.current();
 
 		List<Property> properties = List.of(property1, property2);
 		List<User> cleaners = List.of(cleaner1, cleaner2);
 
-		for (int i = 0; i < 30; i++) {
+		for (int i = 0; i < 10; i++) {
 			// Random date from tomorrow through 14 days from today
 			LocalDate cleaningDay = today.plusDays(random.nextInt(1, 15));
 
