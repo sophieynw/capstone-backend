@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -32,14 +33,13 @@ public class CleaningController {
 	private final CleaningResponseService cleaningResponseService;
 	private final ChecklistItemRepository checklistItemRepository;
 
-	// Dashboard Page API
 	// GET all upcoming cleanings by userId
 	@GetMapping("/upcoming/{userId}")
 	public List<CleaningResponse> getMyUpcomingCleanings(@PathVariable Long userId) {
 		return cleaningResponseService.getMyUpcomingCleanings(userId);
 	}
 
-	// 
+	// GET first cleaning by property ID
 	@GetMapping("/upcoming/{propertyId}/first")
 	public ResponseEntity<CleaningResponse> getNextCleaningByPropertyId(@PathVariable Long propertyId) {
 		return cleaningResponseService
@@ -53,6 +53,7 @@ public class CleaningController {
 		return cleaningRepository.findById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
 	}
 
+	// CREATE new cleaning record
 	@PostMapping
 	public ResponseEntity<CleaningResponse> create(@RequestBody Cleaning cleaning) {
 
@@ -87,6 +88,13 @@ public class CleaningController {
 	    CleaningResponse cleaningResponse = cleaningResponseService.toCleaningResponse(savedCleaning);
 
 	    return ResponseEntity.status(HttpStatus.CREATED).body(cleaningResponse);
+	}
+	
+	// Marks cleaning a complete
+	@PatchMapping("/{cleaningId}/complete")
+	public ResponseEntity<CleaningResponse> completeCleaning(@PathVariable Long cleaningId) {
+		CleaningResponse response = cleaningResponseService.completeCleaning(cleaningId);
+		return ResponseEntity.ok(response);
 	}
 
 	@PutMapping("/{id}")
