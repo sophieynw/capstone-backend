@@ -4,7 +4,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import ca.sheridancollege.restfulhousekeeping.beans.Cleaning;
 import ca.sheridancollege.restfulhousekeeping.beans.Role;
@@ -59,6 +62,21 @@ public class CleaningResponseService {
         		LocalDateTime.now()
         	)
         		.map(this::toCleaningResponse);
+    }
+    
+    @Transactional
+    public CleaningResponse completeCleaning(Long cleaningId) {
+        Cleaning cleaning = cleaningRepository
+            .findById(cleaningId)
+            .orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                "Cleaning not found"
+            ));
+
+        cleaning.setIsComplete(true);
+        cleaning.setDateTimeCompleted(LocalDateTime.now());
+
+        return toCleaningResponse(cleaning);
     }
     
     public CleaningResponse toCleaningResponse(Cleaning cleaning) {
