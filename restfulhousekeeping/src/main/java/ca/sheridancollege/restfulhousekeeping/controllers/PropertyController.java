@@ -2,25 +2,32 @@ package ca.sheridancollege.restfulhousekeeping.controllers;
 
 import java.util.List;
 
-import ca.sheridancollege.restfulhousekeeping.models.PropertyResponse;
-import ca.sheridancollege.restfulhousekeeping.services.PropertyResponseService;
-import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import ca.sheridancollege.restfulhousekeeping.beans.Property;
+import ca.sheridancollege.restfulhousekeeping.models.PropertyResponse;
 import ca.sheridancollege.restfulhousekeeping.repositories.PropertyRepository;
+import ca.sheridancollege.restfulhousekeeping.services.PropertyResponseService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import lombok.AllArgsConstructor;
 
 @RestController
 @AllArgsConstructor
 @RequestMapping("/properties")
+@SecurityRequirement(name = "Bearer Authentication")
 public class PropertyController {
 
     private final PropertyRepository propertyRepository;
     private final PropertyResponseService propertyResponseService;
-
-//    public PropertyController(PropertyRepository propertyRepository) {
-//        this.propertyRepository = propertyRepository;
-//    }
 
     @GetMapping
     public List<Property> getAll() {
@@ -40,9 +47,11 @@ public class PropertyController {
         return propertyResponseService.getPropertyByUserId(userId);
     }
 
+    // CREATE new property record
     @PostMapping
-    public Property create(@RequestBody Property property) {
-        return propertyRepository.save(property);
+    public ResponseEntity<PropertyResponse> create(@RequestBody Property property) {
+    	PropertyResponse response = propertyResponseService.createProperty(property);
+    	return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PutMapping("/{id}")
