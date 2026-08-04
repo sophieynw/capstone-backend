@@ -280,6 +280,8 @@ public class BootstrapData implements CommandLineRunner {
 		Cleaning cleaning1 = Cleaning.builder()
 		        .dateTimeStart(LocalDateTime.now().plusHours(1))
 		        .dateTimeEnd(oneHourFromNow.plusHours(2))
+		        .notes("Upcoming cleaning 1.")
+		        .isComplete(true)
 		        .build();
 		cleaning1.setProperty(property1);
 		cleaning1.setCleaner(cleaner1);
@@ -319,13 +321,12 @@ public class BootstrapData implements CommandLineRunner {
 
 
 		// CleaningChecklistItems
-		
 		cleaningChecklistItemRepository
-		.saveAll(List.of(CleaningChecklistItem.builder().cleaning(cleaning1).checklistItem(kitchen).build(),
-				CleaningChecklistItem.builder().cleaning(cleaning1).checklistItem(bathroom).build(),
-				CleaningChecklistItem.builder().cleaning(cleaning1).checklistItem(bedding).build(),
-				CleaningChecklistItem.builder().cleaning(cleaning1).checklistItem(supplies).build(),
-				CleaningChecklistItem.builder().cleaning(cleaning1).checklistItem(ceilingCorners).build()));
+		.saveAll(List.of(CleaningChecklistItem.builder().cleaning(cleaning1).checklistItem(kitchen).isComplete(true).build(),
+				CleaningChecklistItem.builder().cleaning(cleaning1).checklistItem(bathroom).isComplete(true).build(),
+				CleaningChecklistItem.builder().cleaning(cleaning1).checklistItem(bedding).isComplete(true).build(),
+				CleaningChecklistItem.builder().cleaning(cleaning1).checklistItem(supplies).isComplete(true).build(),
+				CleaningChecklistItem.builder().cleaning(cleaning1).checklistItem(ceilingCorners).isComplete(true).build()));
 
 		cleaningChecklistItemRepository
 				.saveAll(List.of(CleaningChecklistItem.builder().cleaning(cleaning2).checklistItem(kitchen2).build(),
