@@ -142,21 +142,22 @@ public class BootstrapData implements CommandLineRunner {
 		cleaner4 = userRepository.save(cleaner4);
 		
 		
+		
 		// Sophie's Properties
 		Property property1 = Property.builder()
 				.manager(manager1)
-			    .name("Wayward Pines House")
-			    .street("1234 Wayward Pines")
-			    .unit("123")
-			    .city("Mississauga")
-			    .province("Ontario")
+			    .name("Lakeshore Studio")
+			    .street("2531 Lakeshore Blvd.")
+			    .unit("G9")
+			    .city("Etobicoke")
+			    .province("ON")
 			    .postalCode("L6D 7N4")
 			    .country("Canada")
-			    .accessInstructions("Lockbox code - 1234. Use the south entrance.")
+			    .accessInstructions("Puroma lockbox by the front door; code 1352.")
 			    .build();
 		Property property2 = Property.builder()
 				.manager(manager1)
-			    .name("Union Condo")
+			    .name("Union 1BR Condo")
 			    .street("101 Union St.")
 			    .unit("292")
 			    .city("Oakville")
@@ -169,7 +170,7 @@ public class BootstrapData implements CommandLineRunner {
 			    .build();
 		Property property3 = Property.builder()
 				.manager(manager1)
-			    .name("Maple Ridge House")
+			    .name("Maple 5BR House")
 			    .street("47 Maple Ridge Drive")
 			    .city("Burlington")
 			    .province("Ontario")
@@ -179,37 +180,37 @@ public class BootstrapData implements CommandLineRunner {
 			        "Keypad code - 7722."
 			    )
 			    .build();
-		Property property4 = Property.builder()
-				.manager(manager1)
-			    .name("Harbourview Condo")
-			    .street("2500 Lakeshore Road West")
-			    .unit("604")
-			    .city("Oakville")
-			    .province("Ontario")
-			    .postalCode("L6L 1H8")
-			    .country("Canada")
-			    .accessInstructions(
-			        "Check in with the concierge and ask for the unit key."
-			    )
-			    .build();
-		Property property5 = Property.builder()
-				.manager(manager1)
-			    .name("Downtown Loft")
-			    .street("80 King Street West")
-			    .unit("1205")
-			    .city("Toronto")
-			    .province("Ontario")
-			    .postalCode("M5H 1J9")
-			    .country("Canada")
-			    .accessInstructions(
-			        "Keypad code - 54321. Enter through the west lobby."
-			    )
-			    .build();
+//		Property property4 = Property.builder()
+//				.manager(manager1)
+//			    .name("Harbourview Condo")
+//			    .street("2500 Lakeshore Road West")
+//			    .unit("604")
+//			    .city("Oakville")
+//			    .province("Ontario")
+//			    .postalCode("L6L 1H8")
+//			    .country("Canada")
+//			    .accessInstructions(
+//			        "Check in with the concierge and ask for the unit key."
+//			    )
+//			    .build();
+//		Property property5 = Property.builder()
+//				.manager(manager1)
+//			    .name("Downtown Loft")
+//			    .street("80 King Street West")
+//			    .unit("1205")
+//			    .city("Toronto")
+//			    .province("Ontario")
+//			    .postalCode("M5H 1J9")
+//			    .country("Canada")
+//			    .accessInstructions(
+//			        "Keypad code - 54321. Enter through the west lobby."
+//			    )
+//			    .build();
 		property1 = propertyRepository.save(property1);
 		property2 = propertyRepository.save(property2);
 		property3 = propertyRepository.save(property3);
-		property4 = propertyRepository.save(property4);
-		property5 = propertyRepository.save(property5);
+//		property4 = propertyRepository.save(property4);
+//		property5 = propertyRepository.save(property5);
 		
 		
 		
@@ -218,7 +219,7 @@ public class BootstrapData implements CommandLineRunner {
 		ChecklistItem kitchen = generateChecklistItem(property1, "Clean kitchen counters and sink", 1, 1);
 		ChecklistItem bathroom = generateChecklistItem(property1, "Clean and disinfect bathroom", 1, 3);
 		ChecklistItem bedding = generateChecklistItem(property1, "Change bed linens", 1, 7);
-		ChecklistItem supplies = generateChecklistItem(property1, "Check if supplies need to be replaced", 15, 4);
+		ChecklistItem supplies = generateChecklistItem(property1, "Check if supplies need to be replaced", 30, 4);
 		ChecklistItem furnaceFilter = generateChecklistItem(property1, "Replace furnace filter", 45, 60);
 		ChecklistItem ceilingCorners = generateChecklistItem(property1, "Dust ceiling corners", 15, 5);
 		ChecklistItem baseboards = generateChecklistItem(property1, "Clean baseboards", 30, 35);
@@ -229,7 +230,7 @@ public class BootstrapData implements CommandLineRunner {
 		ChecklistItem kitchen2 = generateChecklistItem(property2, "Clean kitchen counters and sink", 1, 2);
 		ChecklistItem bathroom2 = generateChecklistItem(property2, "Clean and disinfect bathroom", 1, 2);
 		ChecklistItem bedding2 = generateChecklistItem(property2, "Change bed linens", 1, 6);
-		ChecklistItem supplies2 = generateChecklistItem(property2, "Check if supplies need to be replaced", 20, 4);
+		ChecklistItem supplies2 = generateChecklistItem(property2, "Check if supplies need to be replaced", 30, 4);
 		ChecklistItem hottub = generateChecklistItem(property2, "Check water level in hot tub", 7, 7);
 		ChecklistItem windows2 = generateChecklistItem(property2, "Clean windows and balcony doors", 15, 3);
 		ChecklistItem vents2 = generateChecklistItem(property2, "Dust vents and air returns", 45, 5);
@@ -239,100 +240,92 @@ public class BootstrapData implements CommandLineRunner {
 		ChecklistItem floors3 = generateChecklistItem(property3, "Vacuum carpets and mop floors", 1, 1);
 		ChecklistItem bathroom3 = generateChecklistItem(property3, "Clean and disinfect bathrooms", 1, 4);
 		ChecklistItem bedding3 = generateChecklistItem(property3, "Change bed linens", 1, 5);
+		ChecklistItem supplies3 = generateChecklistItem(property2, "Check if supplies need to be replaced", 30, 4);
 		ChecklistItem ceilingFans3 = generateChecklistItem(property3, "Dust ceiling fans", 15, 6);
 		ChecklistItem furnaceFilter3 = generateChecklistItem(property3, "Replace furnace filter", 45, 7);
 		ChecklistItem windows3 = generateChecklistItem(property3, "Clean interior windows", 20, 3);
 		ChecklistItem sinks3 = generateChecklistItem(property3, "Check under sinks for leaks", 15, 2);
 		checklistItemRepository
-				.saveAll(List.of(floors3, bathroom3, bedding3, ceilingFans3, furnaceFilter3, windows3, sinks3));
+				.saveAll(List.of(floors3, bathroom3, bedding3, supplies3, ceilingFans3, furnaceFilter3, windows3, sinks3));
 
 		// Property 4 checklist items
-		ChecklistItem kitchen4 = generateChecklistItem(property4, "Clean kitchen surfaces", 1, 1);
-		ChecklistItem bathroom4 = generateChecklistItem(property4, "Clean bathroom fixtures", 1, 3);
-		ChecklistItem towels4 = generateChecklistItem(property4, "Replace towels and linens", 1, 4);
-		ChecklistItem appliances4 = generateChecklistItem(property4, "Wipe appliance exteriors", 7, 5);
-		ChecklistItem windows4 = generateChecklistItem(property4, "Clean windows and mirrors", 14, 6);
-		ChecklistItem balcony4 = generateChecklistItem(property4, "Sweep and wash balcony", 30, 7);
-		ChecklistItem smokeDetectors4 = generateChecklistItem(property4, "Test smoke detectors", 60, 2);
+//		ChecklistItem kitchen4 = generateChecklistItem(property4, "Clean kitchen surfaces", 1, 1);
+//		ChecklistItem bathroom4 = generateChecklistItem(property4, "Clean bathroom fixtures", 1, 3);
+//		ChecklistItem towels4 = generateChecklistItem(property4, "Replace towels and linens", 1, 4);
+//		ChecklistItem appliances4 = generateChecklistItem(property4, "Wipe appliance exteriors", 7, 5);
+//		ChecklistItem windows4 = generateChecklistItem(property4, "Clean windows and mirrors", 14, 6);
+//		ChecklistItem balcony4 = generateChecklistItem(property4, "Sweep and wash balcony", 30, 7);
+//		ChecklistItem smokeDetectors4 = generateChecklistItem(property4, "Test smoke detectors", 60, 2);
 
-		checklistItemRepository
-				.saveAll(List.of(kitchen4, bathroom4, towels4, appliances4, windows4, balcony4, smokeDetectors4));
+//		checklistItemRepository
+//				.saveAll(List.of(kitchen4, bathroom4, towels4, appliances4, windows4, balcony4, smokeDetectors4));
 
 		// Property 5 checklist items
-		ChecklistItem floors5 = generateChecklistItem(property5, "Sweep and mop floors", 1, 2);
-		ChecklistItem shower5 = generateChecklistItem(property5, "Clean glass shower doors", 1, 1);
-		ChecklistItem surfaces5 = generateChecklistItem(property5, "Wipe counters and surfaces", 1, 4);
-		ChecklistItem shelves5 = generateChecklistItem(property5, "Dust shelves and exposed pipes", 7, 6);
-		ChecklistItem rangeHood5 = generateChecklistItem(property5, "Clean range hood filter", 30, 7);
-		ChecklistItem sofa5 = generateChecklistItem(property5, "Vacuum sofa and cushions", 14, 5);
-		ChecklistItem alarms5 = generateChecklistItem(property5, "Test smoke and carbon monoxide alarms", 60, 3);
-		checklistItemRepository.saveAll(List.of(floors5, shower5, surfaces5, shelves5, rangeHood5, sofa5, alarms5));	
+//		ChecklistItem floors5 = generateChecklistItem(property5, "Sweep and mop floors", 1, 2);
+//		ChecklistItem shower5 = generateChecklistItem(property5, "Clean glass shower doors", 1, 1);
+//		ChecklistItem surfaces5 = generateChecklistItem(property5, "Wipe counters and surfaces", 1, 4);
+//		ChecklistItem shelves5 = generateChecklistItem(property5, "Dust shelves and exposed pipes", 7, 6);
+//		ChecklistItem rangeHood5 = generateChecklistItem(property5, "Clean range hood filter", 30, 7);
+//		ChecklistItem sofa5 = generateChecklistItem(property5, "Vacuum sofa and cushions", 14, 5);
+//		ChecklistItem alarms5 = generateChecklistItem(property5, "Test smoke and carbon monoxide alarms", 60, 3);
+//		checklistItemRepository.saveAll(List.of(floors5, shower5, surfaces5, shelves5, rangeHood5, sofa5, alarms5));	
 		
 
 		
 		// Cleanings		
-		LocalDateTime todayAt1159Pm = LocalDate.now().atTime(23, 59);
+//		LocalDateTime todayAt1159Pm = LocalDate.now().atTime(23, 59);
 		LocalDateTime oneHourFromNow = LocalDateTime.now().plusHours(1);
 
+		// property 1 cleaning
 		Cleaning cleaning1 = Cleaning.builder()
-		        .dateTimeStart(oneHourFromNow)
+		        .dateTimeStart(LocalDateTime.now().plusHours(1))
 		        .dateTimeEnd(oneHourFromNow.plusHours(2))
-		        .notes("Upcoming cleaning 1.")
 		        .build();
-
-		Cleaning cleaning2 = Cleaning.builder()
-		        .dateTimeStart(oneHourFromNow)
-		        .dateTimeEnd(oneHourFromNow.plusHours(2))
-		        .notes("Upcoming cleaning 2.")
-		        .build();
-
-		Cleaning cleaning3 = Cleaning.builder()
-		        .dateTimeStart(oneHourFromNow)
-		        .dateTimeEnd(oneHourFromNow.plusHours(2))
-		        .notes("Upcoming cleaning 3.")
-		        .build();
-		Cleaning cleaning4 = Cleaning.builder().dateTimeStart(LocalDateTime.of(2026, 7, 31, 12, 30))
-				.dateTimeEnd(LocalDateTime.of(2026, 7, 31, 14, 30)).notes("Upcoming cleaning 3 with Manager = Sophie.")
-				.build();
-		AvailabilitySlot slot1 = AvailabilitySlot.builder().dayOfWeek(DayOfWeek.TUESDAY).startTime(LocalTime.of(9, 0))
-				.endTime(LocalTime.of(17, 0)).build();
-		AvailabilitySlot slot2 = AvailabilitySlot.builder().dayOfWeek(DayOfWeek.WEDNESDAY).startTime(LocalTime.of(9, 0))
-				.endTime(LocalTime.of(17, 0)).build();
-
-		// Cleanings
 		cleaning1.setProperty(property1);
 		cleaning1.setCleaner(cleaner1);
 		cleaning1.setManager(manager1);
 		cleaning1 = cleaningRepository.save(cleaning1);
+		
+		// property 2 cleaning
+		Cleaning cleaning2 = Cleaning.builder()
+		        .dateTimeStart(LocalDateTime.now().plusHours(1))
+		        .dateTimeEnd(oneHourFromNow.plusHours(3))
+		        .build();
 		cleaning2.setProperty(property2);
 		cleaning2.setCleaner(cleaner2);
 		cleaning2.setManager(manager1);
 		cleaning2 = cleaningRepository.save(cleaning2);
-		cleaning3.setProperty(property2);
+		
+		// property 3 cleaning
+		Cleaning cleaning3 = Cleaning.builder()
+		        .dateTimeStart(LocalDateTime.now().plusHours(2))
+		        .dateTimeEnd(oneHourFromNow.plusHours(3))
+		        .build();
+		cleaning3.setProperty(property3);
 		cleaning3.setCleaner(cleaner1);
 		cleaning3.setManager(manager1);
 		cleaning3 = cleaningRepository.save(cleaning3);
+		
+		// property 1 cleaning
+		Cleaning cleaning4 = Cleaning.builder()
+				.dateTimeStart(LocalDateTime.now().plusHours(2))
+				.dateTimeEnd(LocalDateTime.now().plusHours(4))
+				.build();
 		cleaning4.setProperty(property1);
 		cleaning4.setCleaner(cleaner1);
 		cleaning4.setManager(manager1);
 		cleaning4 = cleaningRepository.save(cleaning4);
 
 
+
 		// CleaningChecklistItems
-		CleaningChecklistItem cleaning1Kitchen = CleaningChecklistItem.builder().cleaning(cleaning1)
-				.checklistItem(kitchen).isComplete(false).build();
-
-		CleaningChecklistItem cleaning1Bathroom = CleaningChecklistItem.builder().cleaning(cleaning1)
-				.checklistItem(bathroom).isComplete(false).build();
-
-		CleaningChecklistItem cleaning1Bedding = CleaningChecklistItem.builder().cleaning(cleaning1)
-				.checklistItem(bedding).isComplete(false).build();
-
-		CleaningChecklistItem cleaning1Supplies = CleaningChecklistItem.builder().cleaning(cleaning1)
-				.checklistItem(supplies).isComplete(false).build();
-
+		
 		cleaningChecklistItemRepository
-				.saveAll(List.of(cleaning1Kitchen, cleaning1Bathroom, cleaning1Bedding, cleaning1Supplies));
+		.saveAll(List.of(CleaningChecklistItem.builder().cleaning(cleaning1).checklistItem(kitchen).build(),
+				CleaningChecklistItem.builder().cleaning(cleaning1).checklistItem(bathroom).build(),
+				CleaningChecklistItem.builder().cleaning(cleaning1).checklistItem(bedding).build(),
+				CleaningChecklistItem.builder().cleaning(cleaning1).checklistItem(supplies).build(),
+				CleaningChecklistItem.builder().cleaning(cleaning1).checklistItem(ceilingCorners).build()));
 
 		cleaningChecklistItemRepository
 				.saveAll(List.of(CleaningChecklistItem.builder().cleaning(cleaning2).checklistItem(kitchen2).build(),
@@ -340,8 +333,31 @@ public class BootstrapData implements CommandLineRunner {
 						CleaningChecklistItem.builder().cleaning(cleaning2).checklistItem(bedding2).build(),
 						CleaningChecklistItem.builder().cleaning(cleaning2).checklistItem(supplies2).build(),
 						CleaningChecklistItem.builder().cleaning(cleaning2).checklistItem(hottub).build()));
+		
+		cleaningChecklistItemRepository
+		.saveAll(List.of(CleaningChecklistItem.builder().cleaning(cleaning3).checklistItem(floors3).build(),
+				CleaningChecklistItem.builder().cleaning(cleaning3).checklistItem(bathroom3).build(),
+				CleaningChecklistItem.builder().cleaning(cleaning3).checklistItem(bedding3).build(),
+				CleaningChecklistItem.builder().cleaning(cleaning3).checklistItem(windows3).build(),
+				CleaningChecklistItem.builder().cleaning(cleaning3).checklistItem(sinks3).build()));
+		
+		cleaningChecklistItemRepository
+		.saveAll(List.of(CleaningChecklistItem.builder().cleaning(cleaning4).checklistItem(kitchen).build(),
+				CleaningChecklistItem.builder().cleaning(cleaning4).checklistItem(bathroom).build(),
+				CleaningChecklistItem.builder().cleaning(cleaning4).checklistItem(bedding).build()));
+
+
+		
+		
 
 		// Availabilities
+				
+		AvailabilitySlot slot1 = AvailabilitySlot.builder().dayOfWeek(DayOfWeek.TUESDAY).startTime(LocalTime.of(9, 0))
+		.endTime(LocalTime.of(17, 0)).build();
+		AvailabilitySlot slot2 = AvailabilitySlot.builder().dayOfWeek(DayOfWeek.WEDNESDAY).startTime(LocalTime.of(9, 0))
+		.endTime(LocalTime.of(17, 0)).build();
+		
+		
 		Availability availability1 = new Availability();
 		availability1.setCleaner(cleaner1);
 		availability1 = availabilityRepository.save(availability1);
@@ -384,53 +400,53 @@ public class BootstrapData implements CommandLineRunner {
 		}
 
 		// Generate 5 cleanings for today
-		LocalDate currentDate = LocalDate.now();
-		ThreadLocalRandom todayRandom = ThreadLocalRandom.current();
-
-		List<Property> todayProperties = List.of(property1, property2);
-		List<User> availableCleaners = List.of(cleaner1, cleaner2);
-
-		for (int i = 0; i < 5; i++) {
-		    // Duration is either 2 or 3 hours
-		    int durationHours = todayRandom.nextInt(2, 4);
-
-		    int earliestStartMinutes = 8 * 60;
-		    int latestStartMinutes = (24 - durationHours) * 60;
-
-		    // Number of available 30-minute start slots, including the last slot
-		    int slotCount =
-		            ((latestStartMinutes - earliestStartMinutes) / 30) + 1;
-
-		    int startMinutes =
-		            earliestStartMinutes + todayRandom.nextInt(slotCount) * 30;
-
-		    int hour = startMinutes / 60;
-		    int minute = startMinutes % 60;
-
-		    LocalDateTime start = currentDate.atTime(hour, minute);
-		    LocalDateTime end = start.plusHours(durationHours);
-
-		    Cleaning cleaning = Cleaning.builder()
-		            .dateTimeStart(start)
-		            .dateTimeEnd(end)
-		            .notes("Automatically generated cleaning for today " + (i + 1))
-		            .build();
-
-		    cleaning.setProperty(
-		            todayProperties.get(i % todayProperties.size())
-		    );
-		    cleaning.setManager(manager1);
-
-		    // Assign cleanings 1, 3, and 5; leave 2 and 4 unassigned
-		    if (i % 2 == 0) {
-		        cleaning.setCleaner(
-		                availableCleaners.get(
-		                        todayRandom.nextInt(availableCleaners.size())
-		                )
-		        );
-		    }
-
-		    cleaningRepository.save(cleaning);
-		}
+//		LocalDate currentDate = LocalDate.now();
+//		ThreadLocalRandom todayRandom = ThreadLocalRandom.current();
+//
+//		List<Property> todayProperties = List.of(property1, property2);
+//		List<User> availableCleaners = List.of(cleaner1, cleaner2);
+//
+//		for (int i = 0; i < 5; i++) {
+//		    // Duration is either 2 or 3 hours
+//		    int durationHours = todayRandom.nextInt(2, 4);
+//
+//		    int earliestStartMinutes = 8 * 60;
+//		    int latestStartMinutes = (24 - durationHours) * 60;
+//
+//		    // Number of available 30-minute start slots, including the last slot
+//		    int slotCount =
+//		            ((latestStartMinutes - earliestStartMinutes) / 30) + 1;
+//
+//		    int startMinutes =
+//		            earliestStartMinutes + todayRandom.nextInt(slotCount) * 30;
+//
+//		    int hour = startMinutes / 60;
+//		    int minute = startMinutes % 60;
+//
+//		    LocalDateTime start = currentDate.atTime(hour, minute);
+//		    LocalDateTime end = start.plusHours(durationHours);
+//
+//		    Cleaning cleaning = Cleaning.builder()
+//		            .dateTimeStart(start)
+//		            .dateTimeEnd(end)
+//		            .notes("Automatically generated cleaning for today " + (i + 1))
+//		            .build();
+//
+//		    cleaning.setProperty(
+//		            todayProperties.get(i % todayProperties.size())
+//		    );
+//		    cleaning.setManager(manager1);
+//
+//		    // Assign cleanings 1, 3, and 5; leave 2 and 4 unassigned
+//		    if (i % 2 == 0) {
+//		        cleaning.setCleaner(
+//		                availableCleaners.get(
+//		                        todayRandom.nextInt(availableCleaners.size())
+//		                )
+//		        );
+//		    }
+//
+//		    cleaningRepository.save(cleaning);
+//		}
 	}
 }
