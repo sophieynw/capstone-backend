@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import ca.sheridancollege.restfulhousekeeping.beans.Property;
+import ca.sheridancollege.restfulhousekeeping.models.CreatePropertyRequest;
 import ca.sheridancollege.restfulhousekeeping.models.PropertyResponse;
 import ca.sheridancollege.restfulhousekeeping.repositories.PropertyRepository;
 import ca.sheridancollege.restfulhousekeeping.services.PropertyResponseService;
@@ -49,9 +50,18 @@ public class PropertyController {
 
     // CREATE new property record
     @PostMapping
-    public ResponseEntity<PropertyResponse> create(@RequestBody Property property) {
-    	PropertyResponse response = propertyResponseService.createProperty(property);
-    	return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    public ResponseEntity<PropertyResponse> create(
+            @RequestBody CreatePropertyRequest request) {
+
+        PropertyResponse response =
+                propertyResponseService.createProperty(
+                        request.getProperty(),
+                        request.getChecklistItems()
+                );
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(response);
     }
 
     @PutMapping("/{id}")

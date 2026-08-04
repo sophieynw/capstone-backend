@@ -8,10 +8,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import ca.sheridancollege.restfulhousekeeping.beans.ChecklistItem;
 import ca.sheridancollege.restfulhousekeeping.beans.Property;
 import ca.sheridancollege.restfulhousekeeping.beans.Role;
 import ca.sheridancollege.restfulhousekeeping.beans.User;
+import ca.sheridancollege.restfulhousekeeping.models.CreateChecklistItemRequest;
 import ca.sheridancollege.restfulhousekeeping.models.PropertyResponse;
+import ca.sheridancollege.restfulhousekeeping.repositories.ChecklistItemRepository;
 import ca.sheridancollege.restfulhousekeeping.repositories.PropertyRepository;
 import ca.sheridancollege.restfulhousekeeping.repositories.UserRepository;
 import lombok.AllArgsConstructor;
@@ -23,6 +26,7 @@ public class PropertyResponseService {
     private final PropertyRepository propertyRepository;
     private final UserRepository userRepository;
     private final CleaningChecklistItemResponseService cciResponseService;
+    private final ChecklistItemRepository checklistItemRepository;
 
     public List<PropertyResponse> getPropertyByUserId(Long userId) {
 
@@ -50,7 +54,7 @@ public class PropertyResponseService {
     
     // CREATE new property record service
     @Transactional
-    public PropertyResponse createProperty(Property property) {
+    public PropertyResponse createProperty(Property property, List<CreateChecklistItemRequest> checklistItems) {
     	property.setId(null);
     	
         if (property.getManager() == null || property.getManager().getId() == null) {
@@ -75,6 +79,19 @@ public class PropertyResponseService {
     	property.setManager(manager);
     	Property savedProperty = propertyRepository.save(property);
     	
+    	if (checklistItems != null) {
+            List<ChecklistItem> newItems = checklistItems.stream()
+                    .map(item -> ChecklistItem.builder()
+                            .property(savedProperty)
+                            .description(item.getDescription())
+                            .frequencyDays(item.getFrequencyDays())
+                            .lastCompleted(null)
+                            .build())
+                    .toList();
+
+            checklistItemRepository.saveAll(newItems);
+        }
+    	
     	return toPropertyResponse(savedProperty);
     			
     	
@@ -88,10 +105,10 @@ public class PropertyResponseService {
                 .street(property.getStreet())
                 .unit(property.getUnit())
                 .city(property.getCity())
-                .province(property.getCity())
+                .province(property.getProvince())
                 .postalCode(property.getPostalCode())
                 .country(property.getCountry())
-                .accessInstructions(property.getCountry())
+                .accessInstructions(property.getAccessInstructions())
 
                 .build();
     }
