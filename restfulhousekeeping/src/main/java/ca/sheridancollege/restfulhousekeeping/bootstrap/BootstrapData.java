@@ -115,10 +115,31 @@ public class BootstrapData implements CommandLineRunner {
 				.phoneNumber("2260001234")
 				.role(Role.CLEANER)
 				.build();
+		User cleaner3 = User.builder()
+				.organization(organization1)
+				.firstName("John")
+				.lastName("Smith")
+				.username("john")
+				.email("john@test.com")
+				.password(passwordEncoder.encode("password"))
+				.phoneNumber("4160001234")
+				.role(Role.CLEANER)
+				.build();
+		User cleaner4 = User.builder()
+				.organization(organization1)
+				.firstName("Jane")
+				.lastName("Smith")
+				.username("jane")
+				.email("jane@test.com")
+				.password(passwordEncoder.encode("password"))
+				.phoneNumber("6470001234")
+				.role(Role.CLEANER)
+				.build();
 		manager1 = userRepository.save(manager1);
 		cleaner1 = userRepository.save(cleaner1);
 		cleaner2 = userRepository.save(cleaner2);
-		
+		cleaner3 = userRepository.save(cleaner3);
+		cleaner4 = userRepository.save(cleaner4);
 		
 		
 		// Sophie's Properties
