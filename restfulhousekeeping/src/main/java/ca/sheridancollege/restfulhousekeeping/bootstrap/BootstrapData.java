@@ -321,24 +321,12 @@ public class BootstrapData implements CommandLineRunner {
 
 
 		// CleaningChecklistItems
-		CleaningChecklistItem cleaning1Kitchen = CleaningChecklistItem.builder().cleaning(cleaning1)
-				.checklistItem(kitchen).isComplete(true).build();
-
-		CleaningChecklistItem cleaning1Bathroom = CleaningChecklistItem.builder().cleaning(cleaning1)
-				.checklistItem(bathroom).isComplete(true).build();
-
-		CleaningChecklistItem cleaning1Bedding = CleaningChecklistItem.builder().cleaning(cleaning1)
-				.checklistItem(bedding).isComplete(true).build();
-
-		CleaningChecklistItem cleaning1Supplies = CleaningChecklistItem.builder().cleaning(cleaning1)
-				.checklistItem(supplies).isComplete(true).build();
-
 		cleaningChecklistItemRepository
-		.saveAll(List.of(CleaningChecklistItem.builder().cleaning(cleaning1).checklistItem(kitchen).build(),
-				CleaningChecklistItem.builder().cleaning(cleaning1).checklistItem(bathroom).build(),
-				CleaningChecklistItem.builder().cleaning(cleaning1).checklistItem(bedding).build(),
-				CleaningChecklistItem.builder().cleaning(cleaning1).checklistItem(supplies).build(),
-				CleaningChecklistItem.builder().cleaning(cleaning1).checklistItem(ceilingCorners).build()));
+		.saveAll(List.of(CleaningChecklistItem.builder().cleaning(cleaning1).checklistItem(kitchen).isComplete(true).build(),
+				CleaningChecklistItem.builder().cleaning(cleaning1).checklistItem(bathroom).isComplete(true).build(),
+				CleaningChecklistItem.builder().cleaning(cleaning1).checklistItem(bedding).isComplete(true).build(),
+				CleaningChecklistItem.builder().cleaning(cleaning1).checklistItem(supplies).isComplete(true).build(),
+				CleaningChecklistItem.builder().cleaning(cleaning1).checklistItem(ceilingCorners).isComplete(true).build()));
 
 		cleaningChecklistItemRepository
 				.saveAll(List.of(CleaningChecklistItem.builder().cleaning(cleaning2).checklistItem(kitchen2).build(),
