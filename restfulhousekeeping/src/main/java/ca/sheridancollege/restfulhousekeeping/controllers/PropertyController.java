@@ -2,6 +2,7 @@ package ca.sheridancollege.restfulhousekeeping.controllers;
 
 import java.util.List;
 
+import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -79,12 +80,23 @@ public class PropertyController {
         }).orElse(ResponseEntity.notFound().build());
     }
 
+//    @DeleteMapping("/{id}")
+//    public ResponseEntity<Void> delete(@PathVariable Long id) {
+//        if (!propertyRepository.existsById(id)) {
+//            return ResponseEntity.notFound().build();
+//        }
+//        propertyRepository.deleteById(id);
+//        return ResponseEntity.noContent().build();
+//    }
+
     @DeleteMapping("/{id}")
+    @Transactional
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        if (!propertyRepository.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
-        propertyRepository.deleteById(id);
-        return ResponseEntity.noContent().build();
+        return propertyRepository.findById(id)
+                .map(property -> {
+                    propertyRepository.delete(property);
+                    return ResponseEntity.noContent().<Void>build();
+                })
+                .orElse(ResponseEntity.notFound().build());
     }
 }

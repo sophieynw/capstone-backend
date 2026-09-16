@@ -40,7 +40,7 @@ public class Cleaning {
 	
 	@ManyToOne
 	@JoinColumn(name="propertyId", nullable=false)
-  @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private Property property;
 	
 	private LocalDateTime dateTimeStart;
