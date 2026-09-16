@@ -1,15 +1,14 @@
 package ca.sheridancollege.restfulhousekeeping.beans;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -32,4 +31,14 @@ public class Property {
 	private String postalCode;
 	private String country;
 	private String accessInstructions;
+
+	@OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonIgnore
+	@Builder.Default
+	private List<ChecklistItem> checklistItems = new ArrayList<>();
+
+	@OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonIgnore
+	@Builder.Default
+	private List<Cleaning> cleanings = new ArrayList<>();
 }
