@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
@@ -39,6 +40,7 @@ public class Cleaning {
 	
 	@ManyToOne
 	@JoinColumn(name="propertyId", nullable=false)
+	@JsonIgnore
 	private Property property;
 	
 	private LocalDateTime dateTimeStart;
