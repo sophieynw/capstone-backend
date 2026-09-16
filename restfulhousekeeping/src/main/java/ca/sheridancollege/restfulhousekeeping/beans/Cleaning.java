@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -40,7 +39,8 @@ public class Cleaning {
 	private User cleaner;
 	
 	@ManyToOne
-	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+	@JoinColumn(name="propertyId", nullable=false)
+  @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private Property property;
 	
 	private LocalDateTime dateTimeStart;
