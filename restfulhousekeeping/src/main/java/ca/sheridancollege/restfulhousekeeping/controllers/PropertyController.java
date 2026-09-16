@@ -81,6 +81,7 @@ public class PropertyController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
+        System.out.println("DELETE PROPERTY CONTROLLER REACHED: " + id);
         if (!propertyRepository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
