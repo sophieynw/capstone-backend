@@ -5,11 +5,13 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import ca.sheridancollege.restfulhousekeeping.beans.Organization; 
 import ca.sheridancollege.restfulhousekeeping.beans.User;
 import ca.sheridancollege.restfulhousekeeping.models.AuthenticationRequest;
 import ca.sheridancollege.restfulhousekeeping.models.AuthenticationResponse;
 import ca.sheridancollege.restfulhousekeeping.models.RegisterRequest;
 import ca.sheridancollege.restfulhousekeeping.models.UserResponse;
+import ca.sheridancollege.restfulhousekeeping.repositories.OrganizationRepository; 
 import ca.sheridancollege.restfulhousekeeping.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 
@@ -18,6 +20,7 @@ import lombok.AllArgsConstructor;
 public class AuthenticationResponseService {
 	
 	private UserRepository userRepository;
+	private OrganizationRepository organizationRepository; 
 	private PasswordEncoder passwordEncoder;
 	private JwtService jwtService;
 	private AuthenticationManager authenticationManager;
@@ -25,6 +28,11 @@ public class AuthenticationResponseService {
 	// a method to register a new user in our DB and generate a JWT for them
 	@SuppressWarnings("unchecked")
 	public AuthenticationResponse register(RegisterRequest request) {
+		
+		Organization organization = organizationRepository
+				.findById(request.getOrganizationId())
+				.orElseThrow(() -> new RuntimeException("Organization not found"));
+		
 		User user = User.builder()
 				.firstName(request.getFirstName())
 				.lastName(request.getLastName())
@@ -33,6 +41,7 @@ public class AuthenticationResponseService {
 				.password(passwordEncoder.encode(request.getPassword()))
 				.phoneNumber(request.getPhoneNumber())
 				.role(request.getRole())
+				.organization(organization)
 				.build();
 		userRepository.save(user);
 		var jwtToken = jwtService.generateToken(user);
