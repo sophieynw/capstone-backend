@@ -28,6 +28,11 @@ public class AvailabilitySlotController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/cleaner/{cleanerId}")
+    public List<AvailabilitySlot> getByCleanerId(@PathVariable Long cleanerId) {
+        return slotRepository.findByCleanerId(cleanerId);
+    }
+
     @PostMapping
     public AvailabilitySlot create(@RequestBody AvailabilitySlot slot) {
         return slotRepository.save(slot);

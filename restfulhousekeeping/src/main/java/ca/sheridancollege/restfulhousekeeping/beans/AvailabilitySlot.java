@@ -2,14 +2,7 @@ package ca.sheridancollege.restfulhousekeeping.beans;
 
 import java.time.LocalTime;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,7 +20,11 @@ public class AvailabilitySlot {
 	@ManyToOne
 	@JoinColumn(name="availabilityId", nullable=false)
 	private Availability availability;
-	
+
+	@ManyToOne
+	@JoinColumn(name="cleanerId", nullable=false)
+	private User cleaner;
+
 	@Enumerated(EnumType.STRING)
 	private DayOfWeek dayOfWeek;
 	LocalTime startTime;
