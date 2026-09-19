@@ -4,6 +4,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import ca.sheridancollege.restfulhousekeeping.beans.AvailabilitySlot;
 
-public interface SlotRepository extends JpaRepository<AvailabilitySlot,Long> {
+import java.util.List;
 
+public interface SlotRepository extends JpaRepository<AvailabilitySlot,Long> {
+    List<AvailabilitySlot> findByCleanerId(Long cleanerId);
 }
