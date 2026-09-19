@@ -38,10 +38,10 @@ public class AvailabilitySlotController {
         return slotRepository.save(slot);
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<AvailabilitySlot> update(@PathVariable Long id, @RequestBody AvailabilitySlot updated) {
         return slotRepository.findById(id).map(existing -> {
-            existing.setDayOfWeek(updated.getDayOfWeek());
+            //existing.setDayOfWeek(updated.getDayOfWeek());
             existing.setStartTime(updated.getStartTime());
             existing.setEndTime(updated.getEndTime());
             return ResponseEntity.ok(slotRepository.save(existing));
