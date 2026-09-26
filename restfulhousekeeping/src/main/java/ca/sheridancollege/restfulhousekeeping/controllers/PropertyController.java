@@ -2,17 +2,10 @@ package ca.sheridancollege.restfulhousekeeping.controllers;
 
 import java.util.List;
 
-import jakarta.transaction.Transactional;
+import ca.sheridancollege.restfulhousekeeping.models.UpdatePropertyRequest;import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import ca.sheridancollege.restfulhousekeeping.beans.Property;
 import ca.sheridancollege.restfulhousekeeping.models.CreatePropertyRequest;
@@ -65,20 +58,12 @@ public class PropertyController {
                 .body(response);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Property> update(@PathVariable Long id, @RequestBody Property updated) {
-        return propertyRepository.findById(id).map(existing -> {
-            existing.setName(updated.getName());
-            existing.setStreet(updated.getStreet());
-            existing.setUnit(updated.getUnit());
-            existing.setCity(updated.getCity());
-            existing.setProvince(updated.getProvince());
-            existing.setPostalCode(updated.getPostalCode());
-            existing.setCountry(updated.getCountry());
-            existing.setAccessInstructions(updated.getAccessInstructions());
-            return ResponseEntity.ok(propertyRepository.save(existing));
-        }).orElse(ResponseEntity.notFound().build());
-    }
+    @PatchMapping("/{id}")
+    public ResponseEntity<PropertyResponse> update(@PathVariable Long id, @RequestBody UpdatePropertyRequest updated) {
+        return propertyResponseService.updateProperty(id, updated)
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
+}
 
 //    @DeleteMapping("/{id}")
 //    public ResponseEntity<Void> delete(@PathVariable Long id) {

@@ -1,9 +1,9 @@
 package ca.sheridancollege.restfulhousekeeping.services;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.List;import java.util.Optional;
 
-import org.springframework.http.HttpStatus;
+import ca.sheridancollege.restfulhousekeeping.models.CreatePropertyRequest;import ca.sheridancollege.restfulhousekeeping.models.UpdatePropertyRequest;import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -93,9 +93,59 @@ public class PropertyResponseService {
         }
     	
     	return toPropertyResponse(savedProperty);
-    			
-    	
     }
+
+    // UPDATE existing property record service
+@Transactional
+public Optional<PropertyResponse> updateProperty(Long id, UpdatePropertyRequest request) {
+
+    return propertyRepository.findById(id).map(existing -> {
+
+        if (request.getName() != null) {
+            existing.setName(request.getName());
+        }
+        if (request.getStreet() != null) {
+            existing.setStreet(request.getStreet());
+        }
+        if (request.getUnit() != null) {
+            existing.setUnit(request.getUnit());
+        }
+        if (request.getCity() != null) {
+            existing.setCity(request.getCity());
+        }
+        if (request.getProvince() != null) {
+            existing.setProvince(request.getProvince());
+        }
+        if (request.getPostalCode() != null) {
+            existing.setPostalCode(request.getPostalCode());
+        }
+        if (request.getCountry() != null) {
+            existing.setCountry(request.getCountry());
+        }
+        if (request.getAccessInstructions() != null) {
+            existing.setAccessInstructions(request.getAccessInstructions());
+        }
+
+        if (request.getManagerId() != null) {
+            User manager = userRepository
+                    .findById(request.getManagerId())
+                    .orElseThrow(() -> new ResponseStatusException(
+                            HttpStatus.NOT_FOUND,
+                            "User not found: " + request.getManagerId()));
+
+            if (manager.getRole() != Role.MANAGER) {
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "User " + request.getManagerId() + " is not a manager");
+            }
+
+            existing.setManager(manager);
+        }
+
+        Property saved = propertyRepository.save(existing);
+        return toPropertyResponse(saved);
+    });
+}
 
     private PropertyResponse toPropertyResponse(Property property) {
         return PropertyResponse.builder()
