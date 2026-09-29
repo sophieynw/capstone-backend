@@ -1,6 +1,5 @@
 package ca.sheridancollege.restfulhousekeeping.models;
 
-import ca.sheridancollege.restfulhousekeeping.beans.Organization;
 import ca.sheridancollege.restfulhousekeeping.beans.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

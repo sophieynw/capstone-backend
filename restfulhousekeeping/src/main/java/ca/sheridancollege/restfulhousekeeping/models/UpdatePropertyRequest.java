@@ -1,7 +1,6 @@
 package ca.sheridancollege.restfulhousekeeping.models;
 
 import ca.sheridancollege.restfulhousekeeping.beans.ChecklistItem;
-import ca.sheridancollege.restfulhousekeeping.beans.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
