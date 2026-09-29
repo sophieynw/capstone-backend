@@ -3,7 +3,6 @@ package ca.sheridancollege.restfulhousekeeping.models;
 import ca.sheridancollege.restfulhousekeeping.beans.Availability;
 import ca.sheridancollege.restfulhousekeeping.beans.DayOfWeek;
 import ca.sheridancollege.restfulhousekeeping.beans.User;
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

@@ -3,7 +3,7 @@ package ca.sheridancollege.restfulhousekeeping.services;
 import java.time.LocalDateTime;
 import java.util.List;import java.util.Optional;
 
-import ca.sheridancollege.restfulhousekeeping.models.CreatePropertyRequest;import ca.sheridancollege.restfulhousekeeping.models.UpdatePropertyRequest;import org.springframework.http.HttpStatus;
+import ca.sheridancollege.restfulhousekeeping.models.UpdatePropertyRequest;import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
