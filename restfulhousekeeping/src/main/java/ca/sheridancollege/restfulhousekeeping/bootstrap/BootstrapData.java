@@ -116,7 +116,7 @@ public class BootstrapData implements CommandLineRunner {
 				.role(Role.CLEANER)
 				.build();
 		User cleaner3 = User.builder()
-				.organization(organization1)
+				//.organization(organization1)
 				.firstName("John")
 				.lastName("Smith")
 				.username("john")
@@ -126,7 +126,7 @@ public class BootstrapData implements CommandLineRunner {
 				.role(Role.CLEANER)
 				.build();
 		User cleaner4 = User.builder()
-				.organization(organization1)
+				//.organization(organization1)
 				.firstName("Jane")
 				.lastName("Smith")
 				.username("jane")
