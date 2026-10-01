@@ -22,6 +22,7 @@ public class UserResponse {
     private String email;
     private String phoneNumber;
     private Role role;
+    private String profilePicturePath;
     
     public static UserResponse fromUser(User user) {
     	return new UserResponse(
@@ -32,7 +33,8 @@ public class UserResponse {
             user.getUsername(),
             user.getEmail(),
             user.getPhoneNumber(),
-            user.getRole()
+            user.getRole(),
+            user.getProfilePicturePath() 
         );
 
     }
