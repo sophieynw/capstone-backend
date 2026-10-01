@@ -8,6 +8,10 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.MediaType;
+
 import ca.sheridancollege.restfulhousekeeping.models.UpdateUserRequest;
 import ca.sheridancollege.restfulhousekeeping.services.UserResponseService;
 import org.springframework.http.ResponseEntity;
@@ -102,6 +106,15 @@ public class UserController {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         return ResponseEntity.ok(user.getProfilePicturePath());
+    }
+    
+    @GetMapping("/profile-pictures/{fileName}")
+    public ResponseEntity<Resource> serveFile(@PathVariable String fileName) throws IOException {
+        Path filePath = Paths.get("uploads/profile-pictures/").resolve(fileName);
+        Resource resource = new FileSystemResource(filePath);
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_PNG)
+                .body(resource);
     }
 
     @DeleteMapping("/{id}")

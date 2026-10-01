@@ -8,6 +8,10 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.MediaType;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -66,6 +70,15 @@ public class PhotoController {
                 .build();
 
         return ResponseEntity.ok(photoRepository.save(photo));
+    }
+    
+    @GetMapping("/files/{fileName}")
+    public ResponseEntity<Resource> serveFile(@PathVariable String fileName) throws IOException {
+        Path filePath = Paths.get("uploads/photos/").resolve(fileName);
+        Resource resource = new FileSystemResource(filePath);
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_PNG)
+                .body(resource);
     }
 
     // delete a photo by id
