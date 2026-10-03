@@ -32,6 +32,14 @@ public class AuthenticationResponseService {
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public AuthenticationResponse register(RegisterRequest request) {
+		String username = request.getUsername().trim();
+		if (userRepository.existsByUsername(username)) {
+			throw new ResponseStatusException(
+					HttpStatus.CONFLICT,
+					"Username is already taken."
+				);
+		}
+		
 		Organization organization = resolveOrganization(request);
 		User user = User.builder()
 				.firstName(request.getFirstName())
