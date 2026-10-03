@@ -1,17 +1,19 @@
 package ca.sheridancollege.restfulhousekeeping.services;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
-import ca.sheridancollege.restfulhousekeeping.beans.Organization; 
+import ca.sheridancollege.restfulhousekeeping.beans.Organization;
 import ca.sheridancollege.restfulhousekeeping.beans.User;
 import ca.sheridancollege.restfulhousekeeping.models.AuthenticationRequest;
 import ca.sheridancollege.restfulhousekeeping.models.AuthenticationResponse;
 import ca.sheridancollege.restfulhousekeeping.models.RegisterRequest;
 import ca.sheridancollege.restfulhousekeeping.models.UserResponse;
-import ca.sheridancollege.restfulhousekeeping.repositories.OrganizationRepository; 
+import ca.sheridancollege.restfulhousekeeping.repositories.OrganizationRepository;
 import ca.sheridancollege.restfulhousekeeping.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 
@@ -29,9 +31,7 @@ public class AuthenticationResponseService {
 	@SuppressWarnings("unchecked")
 	public AuthenticationResponse register(RegisterRequest request) {
 		
-		Organization organization = organizationRepository
-				.findById(request.getOrganizationId())
-				.orElseThrow(() -> new RuntimeException("Organization not found"));
+		Organization organization = resolveOrganization(request);
 		
 		User user = User.builder()
 				.firstName(request.getFirstName())
@@ -81,6 +81,46 @@ public class AuthenticationResponseService {
 				.token(jwtToken)
 				.user(userResponse)
 				.build();
+	}
+	
+	// get or create organization
+	private Organization resolveOrganization(RegisterRequest request) {
+	    Long organizationId = request.getOrganizationId();
+	    String organizationName = request.getOrganizationName();
+
+	    boolean hasId = organizationId != null;
+	    boolean hasName =
+	            organizationName != null && !organizationName.isBlank();
+
+	    if (hasId && hasName) {
+	        throw new ResponseStatusException(
+	                HttpStatus.BAD_REQUEST,
+	                "Provide an organization ID or organization name, not both"
+	        );
+	    }
+
+	    if (!hasId && !hasName) {
+	        throw new ResponseStatusException(
+	                HttpStatus.BAD_REQUEST,
+	                "An organization ID or organization name is required"
+	        );
+	    }
+
+	    if (hasId) {
+	        return organizationRepository
+	                .findById(organizationId)
+	                .orElseThrow(() -> new ResponseStatusException(
+	                        HttpStatus.NOT_FOUND,
+	                        "Organization not found"
+	                ));
+	    }
+
+	    Organization organization = Organization.builder()
+	            .name(organizationName.trim())
+	            .description(null)
+	            .build();
+
+	    return organizationRepository.save(organization);
 	}
 
 }
