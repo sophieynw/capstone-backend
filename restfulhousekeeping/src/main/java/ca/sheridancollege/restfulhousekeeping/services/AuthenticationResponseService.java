@@ -5,6 +5,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import ca.sheridancollege.restfulhousekeeping.beans.Organization;
@@ -29,10 +30,9 @@ public class AuthenticationResponseService {
 	
 	// a method to register a new user in our DB and generate a JWT for them
 	@SuppressWarnings("unchecked")
+	@Transactional
 	public AuthenticationResponse register(RegisterRequest request) {
-		
 		Organization organization = resolveOrganization(request);
-		
 		User user = User.builder()
 				.firstName(request.getFirstName())
 				.lastName(request.getLastName())
