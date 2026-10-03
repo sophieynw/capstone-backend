@@ -11,17 +11,24 @@ import java.util.UUID;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
-
-import ca.sheridancollege.restfulhousekeeping.models.UpdateUserRequest;
-import ca.sheridancollege.restfulhousekeeping.services.UserResponseService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import ca.sheridancollege.restfulhousekeeping.beans.Role;
 import ca.sheridancollege.restfulhousekeeping.beans.User;
+import ca.sheridancollege.restfulhousekeeping.models.UpdateUserRequest;
 import ca.sheridancollege.restfulhousekeeping.models.UserResponse;
 import ca.sheridancollege.restfulhousekeeping.repositories.UserRepository;
+import ca.sheridancollege.restfulhousekeeping.services.UserResponseService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AllArgsConstructor;
 
@@ -73,7 +80,7 @@ public class UserController {
             .map(ResponseEntity::ok)
             .orElse(ResponseEntity.notFound().build());
 }
-    
+
     // upload a profile picture for a user
     @PostMapping(value = "/{id}/profile-picture", consumes = "multipart/form-data")
     public ResponseEntity<UserResponse> uploadProfilePicture(
@@ -107,7 +114,7 @@ public class UserController {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         return ResponseEntity.ok(user.getProfilePicturePath());
     }
-    
+
     @GetMapping("/profile-pictures/{fileName}")
     public ResponseEntity<Resource> serveFile(@PathVariable String fileName) throws IOException {
         Path filePath = Paths.get("uploads/profile-pictures/").resolve(fileName);
