@@ -1,14 +1,23 @@
 package ca.sheridancollege.restfulhousekeeping.beans;
 
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -41,4 +50,9 @@ public class Property {
 	@JsonIgnore
 	@Builder.Default
 	private List<Cleaning> cleanings = new ArrayList<>();
+
+	@Builder.Default
+	private LocalTime checkoutTime = LocalTime.of(11, 0);
+	@Builder.Default
+	private LocalTime checkinTime = LocalTime.of(16, 0);
 }

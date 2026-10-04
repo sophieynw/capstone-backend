@@ -1,11 +1,13 @@
 package ca.sheridancollege.restfulhousekeeping.models;
 
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
+
 import ca.sheridancollege.restfulhousekeeping.beans.ChecklistItem;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.util.ArrayList;
-import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -20,6 +22,8 @@ public class UpdatePropertyRequest {
 	private String postalCode;
 	private String country;
 	private String accessInstructions;
+	private LocalTime checkoutTime;
+	private LocalTime checkinTime;
 	private Long managerId;
 	private List<ChecklistItem> checklistItems = new ArrayList<>();
 }

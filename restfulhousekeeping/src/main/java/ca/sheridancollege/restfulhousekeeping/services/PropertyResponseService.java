@@ -125,7 +125,12 @@ public Optional<PropertyResponse> updateProperty(Long id, UpdatePropertyRequest 
         if (request.getAccessInstructions() != null) {
             existing.setAccessInstructions(request.getAccessInstructions());
         }
-
+		if (request.getCheckoutTime() != null) {
+			existing.setCheckoutTime(request.getCheckoutTime());
+		}
+		if (request.getCheckinTime() != null) {
+			existing.setCheckinTime(request.getCheckinTime());
+		}
         if (request.getManagerId() != null) {
             User manager = userRepository
                     .findById(request.getManagerId())
@@ -158,7 +163,9 @@ public Optional<PropertyResponse> updateProperty(Long id, UpdatePropertyRequest 
                 .province(property.getProvince())
                 .postalCode(property.getPostalCode())
                 .country(property.getCountry())
-                .accessInstructions(property.getAccessInstructions())
+				.accessInstructions(property.getAccessInstructions())
+				.checkoutTime(property.getCheckoutTime())
+				.checkinTime(property.getCheckinTime())
 
                 .build();
     }
