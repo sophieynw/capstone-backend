@@ -35,6 +35,7 @@ public class SecurityConfig {
 		return http.authorizeHttpRequests(authorize -> authorize
 						.requestMatchers("/api/v1/auth/register", "/api/v1/auth/authenticate", "/api/v1/auth/username-availability").permitAll()
 						.requestMatchers(HttpMethod.GET, "/organizations").permitAll()
+						// TODO comment or remove for production
 						.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/h2-console/**").permitAll()
 						.anyRequest().authenticated()
 				)

@@ -1,14 +1,26 @@
 package ca.sheridancollege.restfulhousekeeping.beans;
 
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.ArrayList;
-import java.util.List;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Data
 @NoArgsConstructor
@@ -41,4 +53,13 @@ public class Property {
 	@JsonIgnore
 	@Builder.Default
 	private List<Cleaning> cleanings = new ArrayList<>();
+
+	@OneToOne(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonIgnore
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
+	private PropertyCalendarIntegration calendarIntegration;
+
+	private LocalTime checkoutTime;
+	private LocalTime checkinTime;
 }
