@@ -60,8 +60,6 @@ public class Property {
 	@EqualsAndHashCode.Exclude
 	private PropertyCalendarIntegration calendarIntegration;
 
-	@Builder.Default
-	private LocalTime checkoutTime = LocalTime.of(11, 0);
-	@Builder.Default
-	private LocalTime checkinTime = LocalTime.of(16, 0);
+	private LocalTime checkoutTime;
+	private LocalTime checkinTime;
 }
