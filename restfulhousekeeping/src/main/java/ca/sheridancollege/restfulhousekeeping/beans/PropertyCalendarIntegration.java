@@ -26,7 +26,6 @@ import lombok.ToString;
 @AllArgsConstructor
 @Entity
 @Table(
-	name = "property_calendar_integration",
 	uniqueConstraints = @UniqueConstraint(
 		name = "uk_calendar_integration_property",
 		columnNames = "propertyId"
