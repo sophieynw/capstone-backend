@@ -15,6 +15,7 @@ import ca.sheridancollege.restfulhousekeeping.beans.User;
 import ca.sheridancollege.restfulhousekeeping.models.CreateChecklistItemRequest;
 import ca.sheridancollege.restfulhousekeeping.models.PropertyResponse;
 import ca.sheridancollege.restfulhousekeeping.repositories.ChecklistItemRepository;
+import ca.sheridancollege.restfulhousekeeping.repositories.PropertyCalendarIntegrationRepository;
 import ca.sheridancollege.restfulhousekeeping.repositories.PropertyRepository;
 import ca.sheridancollege.restfulhousekeeping.repositories.UserRepository;
 import lombok.AllArgsConstructor;
@@ -27,6 +28,18 @@ public class PropertyResponseService {
     private final UserRepository userRepository;
     private final CleaningChecklistItemResponseService cciResponseService;
     private final ChecklistItemRepository checklistItemRepository;
+    private final PropertyCalendarIntegrationRepository calendarIntegrationRepository;
+
+    public List<PropertyResponse> getAllProperties() {
+        return propertyRepository.findAll().stream()
+                .map(this::toPropertyResponse)
+                .toList();
+    }
+
+    public Optional<PropertyResponse> getPropertyById(Long propertyId) {
+        return propertyRepository.findById(propertyId)
+                .map(this::toPropertyResponse);
+    }
 
     public List<PropertyResponse> getPropertyByUserId(Long userId) {
 
@@ -166,7 +179,10 @@ public Optional<PropertyResponse> updateProperty(Long id, UpdatePropertyRequest 
 				.accessInstructions(property.getAccessInstructions())
 				.checkoutTime(property.getCheckoutTime())
 				.checkinTime(property.getCheckinTime())
-
+				.airbnbCalendarConnected(
+					calendarIntegrationRepository
+						.existsByProperty_IdAndEnabledTrue(property.getId())
+				)
                 .build();
     }
 

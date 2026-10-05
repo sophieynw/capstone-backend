@@ -25,13 +25,13 @@ public class PropertyController {
     private final PropertyResponseService propertyResponseService;
 
     @GetMapping
-    public List<Property> getAll() {
-        return propertyRepository.findAll();
+    public List<PropertyResponse> getAll() {
+        return propertyResponseService.getAllProperties();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Property> getById(@PathVariable Long id) {
-        return propertyRepository.findById(id)
+    public ResponseEntity<PropertyResponse> getById(@PathVariable Long id) {
+        return propertyResponseService.getPropertyById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }

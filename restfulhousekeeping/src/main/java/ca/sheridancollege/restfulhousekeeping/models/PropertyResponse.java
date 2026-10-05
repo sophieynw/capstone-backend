@@ -24,4 +24,5 @@ public class PropertyResponse {
     private String accessInstructions;
     private LocalTime checkoutTime;
     private LocalTime checkinTime;
+    private Boolean airbnbCalendarConnected;
 }

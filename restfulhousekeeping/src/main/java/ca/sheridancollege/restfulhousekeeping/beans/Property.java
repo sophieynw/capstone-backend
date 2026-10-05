@@ -13,11 +13,14 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Data
 @NoArgsConstructor
@@ -50,6 +53,12 @@ public class Property {
 	@JsonIgnore
 	@Builder.Default
 	private List<Cleaning> cleanings = new ArrayList<>();
+
+	@OneToOne(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonIgnore
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
+	private PropertyCalendarIntegration calendarIntegration;
 
 	@Builder.Default
 	private LocalTime checkoutTime = LocalTime.of(11, 0);
