@@ -32,18 +32,13 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity
 @Table(
-	    name = "cleaning",
-	    uniqueConstraints = {
-	        @UniqueConstraint(
-	            name = "uk_cleaning_property_source_event",
-	            columnNames = {
-	                "propertyId",
-	                "source",
-	                "externalEventUid"
-	            }
-	        )
-	    }
-	)
+    uniqueConstraints = {
+        @UniqueConstraint(
+            name = "uk_cleaning_property_source_event",
+            columnNames = {"propertyId", "source","externalEventUid"}
+        )
+    }
+)
 public class Cleaning {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -67,6 +62,7 @@ public class Cleaning {
 	private LocalDateTime dateTimeStarted;
 	private LocalDateTime dateTimeCompleted;
 	private String notes;
+	
 	@OneToMany(
 		    mappedBy = "cleaning",
 		    cascade = CascadeType.ALL,
@@ -82,18 +78,10 @@ public class Cleaning {
 	@Builder.Default
 	private CleaningSource source = CleaningSource.MANUAL;
 
-	@Column(name = "externalEventUid")
 	private String externalEventUid;
-
-	@Column(name = "externalReservationCode")
 	private String externalReservationCode;
-
-	@Column(name = "reservationUrl", length = 2000)
+	@Column(length = 2000)
 	private String reservationUrl;
-
-	@Column(name = "importedCheckInDate")
 	private LocalDate importedCheckInDate;
-
-	@Column(name = "importedCheckOutDate")
 	private LocalDate importedCheckOutDate;
 }
