@@ -1,16 +1,34 @@
 package ca.sheridancollege.restfulhousekeeping.controllers;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.UUID;
 
-import ca.sheridancollege.restfulhousekeeping.models.UpdateUserRequest;
-import ca.sheridancollege.restfulhousekeeping.services.UserResponseService;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import ca.sheridancollege.restfulhousekeeping.beans.Role;
 import ca.sheridancollege.restfulhousekeeping.beans.User;
+import ca.sheridancollege.restfulhousekeeping.models.UpdateUserRequest;
 import ca.sheridancollege.restfulhousekeeping.models.UserResponse;
 import ca.sheridancollege.restfulhousekeeping.repositories.UserRepository;
+import ca.sheridancollege.restfulhousekeeping.services.UserResponseService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AllArgsConstructor;
 
@@ -70,6 +88,49 @@ public class UserController {
             .map(ResponseEntity::ok)
             .orElse(ResponseEntity.notFound().build());
 }
+
+    // upload a profile picture for a user
+    @PostMapping(value = "/{id}/profile-picture", consumes = "multipart/form-data")
+    public ResponseEntity<UserResponse> uploadProfilePicture(
+            @PathVariable Long id,
+            @RequestParam("file") MultipartFile file) throws IOException {
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // make the upload folder if it doesn't exist yet
+        File uploadDir = new File("uploads/profile-pictures/");
+        if (!uploadDir.exists()) {
+            uploadDir.mkdirs();
+        }
+
+        // give the file a unique name
+        String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+        Path filePath = Paths.get("uploads/profile-pictures/" + fileName);
+        Files.write(filePath, file.getBytes());
+
+        user.setProfilePicturePath(filePath.toString());
+        userRepository.save(user);
+
+        return ResponseEntity.ok(UserResponse.fromUser(user));
+    }
+
+    // get profile picture path for a user
+    @GetMapping("/{id}/profile-picture")
+    public ResponseEntity<String> getProfilePicture(@PathVariable Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return ResponseEntity.ok(user.getProfilePicturePath());
+    }
+
+    @GetMapping("/profile-pictures/{fileName}")
+    public ResponseEntity<Resource> serveFile(@PathVariable String fileName) throws IOException {
+        Path filePath = Paths.get("uploads/profile-pictures/").resolve(fileName);
+        Resource resource = new FileSystemResource(filePath);
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_PNG)
+                .body(resource);
+    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {

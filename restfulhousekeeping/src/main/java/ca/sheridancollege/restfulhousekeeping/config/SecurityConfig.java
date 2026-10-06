@@ -2,6 +2,7 @@ package ca.sheridancollege.restfulhousekeeping.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -32,7 +33,8 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		return http.authorizeHttpRequests(authorize -> authorize
-						.requestMatchers("/api/v1/auth/register", "/api/v1/auth/authenticate").permitAll()
+						.requestMatchers("/api/v1/auth/register", "/api/v1/auth/authenticate", "/api/v1/auth/username-availability").permitAll()
+						.requestMatchers(HttpMethod.GET, "/organizations").permitAll()
 						// TODO comment or remove for production
 						.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/h2-console/**").permitAll()
 						.anyRequest().authenticated()
