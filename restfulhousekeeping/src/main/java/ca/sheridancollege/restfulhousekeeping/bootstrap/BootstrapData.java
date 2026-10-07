@@ -6,7 +6,7 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-import org.springframework.boot.CommandLineRunner;
+import ca.sheridancollege.restfulhousekeeping.services.EmailService;import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -43,6 +43,7 @@ public class BootstrapData implements CommandLineRunner {
 	private final CleaningChecklistItemRepository cleaningChecklistItemRepository;
 	private final SlotRepository slotRepository;
 	private final PasswordEncoder passwordEncoder;
+	private final EmailService emailService;
 	
 	// the following two functions can be used to generate a "random" completedDaysAgo number from 1 to 60 days
 	
@@ -74,8 +75,6 @@ public class BootstrapData implements CommandLineRunner {
 		if (organizationRepository.count() > 0) {
 			return;
 		}
-		
-		
 		
 		// Organizations
 		Organization organization1 = Organization.builder().name("The Everything Company")
