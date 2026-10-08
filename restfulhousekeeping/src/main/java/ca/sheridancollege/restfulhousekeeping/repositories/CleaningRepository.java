@@ -34,4 +34,6 @@ public interface CleaningRepository extends JpaRepository<Cleaning,Long> {
 			String externalEventUid
 		);
 
+	List<Cleaning> findByCleanerIdAndIsCompleteTrue(Long cleanerId);
+
 }
