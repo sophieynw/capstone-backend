@@ -33,7 +33,13 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		return http.authorizeHttpRequests(authorize -> authorize
-						.requestMatchers("/api/v1/auth/register", "/api/v1/auth/authenticate", "/api/v1/auth/username-availability").permitAll()
+						.requestMatchers(
+						    "/api/v1/auth/register",
+						    "/api/v1/auth/authenticate",
+						    "/api/v1/auth/username-availability",
+						    "/ws",
+					        "/ws/**"
+						).permitAll()
 						.requestMatchers(HttpMethod.GET, "/organizations").permitAll()
 						.requestMatchers(HttpMethod.POST, "/email").permitAll()
 						// TODO comment or remove for production
