@@ -42,9 +42,7 @@ public class CleaningController {
 	// GET first cleaning by property ID
 	@GetMapping("/upcoming/{propertyId}/first")
 	public ResponseEntity<CleaningResponse> getNextCleaningByPropertyId(@PathVariable Long propertyId) {
-		return cleaningResponseService
-				.getFirstCleaningByProperty(propertyId)
-				.map(ResponseEntity::ok)
+		return cleaningResponseService.getFirstCleaningByProperty(propertyId).map(ResponseEntity::ok)
 				.orElseGet(() -> ResponseEntity.noContent().build());
 	}
 
@@ -57,39 +55,32 @@ public class CleaningController {
 	@PostMapping
 	public ResponseEntity<CleaningResponse> create(@RequestBody Cleaning cleaning) {
 
-	    cleaning.setId(null);
-	    cleaning.setIsComplete(false);
-	    cleaning.setDateTimeStarted(null);
-	    cleaning.setDateTimeCompleted(null);
+		cleaning.setId(null);
+		cleaning.setIsComplete(false);
+		cleaning.setDateTimeStarted(null);
+		cleaning.setDateTimeCompleted(null);
 
-	    cleaning.getCleaningChecklistItems().forEach(item -> {
-	        item.setId(null);
-	        item.setCleaning(cleaning);
-	        item.setIsComplete(false);
+		cleaning.getCleaningChecklistItems().forEach(item -> {
+			item.setId(null);
+			item.setCleaning(cleaning);
+			item.setIsComplete(false);
 
-	        if (item.getChecklistItem() != null) {
-	            Long checklistItemId =
-	                    item.getChecklistItem().getId();
+			if (item.getChecklistItem() != null) {
+				Long checklistItemId = item.getChecklistItem().getId();
 
-	            ChecklistItem existingChecklistItem =
-	                    checklistItemRepository.findById(checklistItemId)
-	                            .orElseThrow(() ->
-	                                    new RuntimeException(
-	                                            "Checklist item not found: "
-	                                                    + checklistItemId
-	                                    )
-	                            );
+				ChecklistItem existingChecklistItem = checklistItemRepository.findById(checklistItemId)
+						.orElseThrow(() -> new RuntimeException("Checklist item not found: " + checklistItemId));
 
-	            item.setChecklistItem(existingChecklistItem);
-	        }
-	    });
-	    
-	    Cleaning savedCleaning = cleaningRepository.save(cleaning);
-	    CleaningResponse cleaningResponse = cleaningResponseService.toCleaningResponse(savedCleaning);
+				item.setChecklistItem(existingChecklistItem);
+			}
+		});
 
-	    return ResponseEntity.status(HttpStatus.CREATED).body(cleaningResponse);
+		Cleaning savedCleaning = cleaningRepository.save(cleaning);
+		CleaningResponse cleaningResponse = cleaningResponseService.toCleaningResponse(savedCleaning);
+
+		return ResponseEntity.status(HttpStatus.CREATED).body(cleaningResponse);
 	}
-	
+
 	// Marks cleaning a complete
 	@PatchMapping("/{cleaningId}/complete")
 	public ResponseEntity<CleaningResponse> completeCleaning(@PathVariable Long cleaningId) {

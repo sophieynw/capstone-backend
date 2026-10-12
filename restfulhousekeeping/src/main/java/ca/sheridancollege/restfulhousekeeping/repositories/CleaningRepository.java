@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import ca.sheridancollege.restfulhousekeeping.beans.Cleaning;
+import ca.sheridancollege.restfulhousekeeping.beans.CleaningSource;
 
 @Repository
 public interface CleaningRepository extends JpaRepository<Cleaning,Long> {
@@ -27,4 +28,10 @@ public interface CleaningRepository extends JpaRepository<Cleaning,Long> {
 	    LocalDateTime dateTimeStart
 	);
 	
+	boolean existsByProperty_IdAndSourceAndExternalEventUid(
+			Long propertyId,
+			CleaningSource source,
+			String externalEventUid
+		);
+
 }

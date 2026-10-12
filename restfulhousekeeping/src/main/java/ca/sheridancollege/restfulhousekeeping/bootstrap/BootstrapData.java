@@ -364,6 +364,10 @@ public class BootstrapData implements CommandLineRunner {
 		availability1 = availabilityRepository.save(availability1);
 		slot1.setAvailability(availability1);
 		slot2.setAvailability(availability1);
+
+		slot1.setCleaner(cleaner1);
+		slot2.setCleaner(cleaner1);
+
 		slot1 = slotRepository.save(slot1);
 		slot2 = slotRepository.save(slot2);
 

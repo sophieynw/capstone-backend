@@ -1,15 +1,20 @@
 package ca.sheridancollege.restfulhousekeeping.services;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
+import ca.sheridancollege.restfulhousekeeping.beans.Organization;
 import ca.sheridancollege.restfulhousekeeping.beans.User;
 import ca.sheridancollege.restfulhousekeeping.models.AuthenticationRequest;
 import ca.sheridancollege.restfulhousekeeping.models.AuthenticationResponse;
 import ca.sheridancollege.restfulhousekeeping.models.RegisterRequest;
 import ca.sheridancollege.restfulhousekeeping.models.UserResponse;
+import ca.sheridancollege.restfulhousekeeping.repositories.OrganizationRepository;
 import ca.sheridancollege.restfulhousekeeping.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 
@@ -18,13 +23,24 @@ import lombok.AllArgsConstructor;
 public class AuthenticationResponseService {
 	
 	private UserRepository userRepository;
+	private OrganizationRepository organizationRepository; 
 	private PasswordEncoder passwordEncoder;
 	private JwtService jwtService;
 	private AuthenticationManager authenticationManager;
 	
 	// a method to register a new user in our DB and generate a JWT for them
 	@SuppressWarnings("unchecked")
+	@Transactional
 	public AuthenticationResponse register(RegisterRequest request) {
+		String username = request.getUsername().trim();
+		if (userRepository.existsByUsername(username)) {
+			throw new ResponseStatusException(
+					HttpStatus.CONFLICT,
+					"Username is already taken."
+				);
+		}
+		
+		Organization organization = resolveOrganization(request);
 		User user = User.builder()
 				.firstName(request.getFirstName())
 				.lastName(request.getLastName())
@@ -33,6 +49,7 @@ public class AuthenticationResponseService {
 				.password(passwordEncoder.encode(request.getPassword()))
 				.phoneNumber(request.getPhoneNumber())
 				.role(request.getRole())
+				.organization(organization)
 				.build();
 		userRepository.save(user);
 		var jwtToken = jwtService.generateToken(user);
@@ -72,6 +89,46 @@ public class AuthenticationResponseService {
 				.token(jwtToken)
 				.user(userResponse)
 				.build();
+	}
+	
+	// get or create organization
+	private Organization resolveOrganization(RegisterRequest request) {
+	    Long organizationId = request.getOrganizationId();
+	    String organizationName = request.getOrganizationName();
+
+	    boolean hasId = organizationId != null;
+	    boolean hasName =
+	            organizationName != null && !organizationName.isBlank();
+
+	    if (hasId && hasName) {
+	        throw new ResponseStatusException(
+	                HttpStatus.BAD_REQUEST,
+	                "Provide an organization ID or organization name, not both"
+	        );
+	    }
+
+	    if (!hasId && !hasName) {
+	        throw new ResponseStatusException(
+	                HttpStatus.BAD_REQUEST,
+	                "An organization ID or organization name is required"
+	        );
+	    }
+
+	    if (hasId) {
+	        return organizationRepository
+	                .findById(organizationId)
+	                .orElseThrow(() -> new ResponseStatusException(
+	                        HttpStatus.NOT_FOUND,
+	                        "Organization not found"
+	                ));
+	    }
+
+	    Organization organization = Organization.builder()
+	            .name(organizationName.trim())
+	            .description(null)
+	            .build();
+
+	    return organizationRepository.save(organization);
 	}
 
 }

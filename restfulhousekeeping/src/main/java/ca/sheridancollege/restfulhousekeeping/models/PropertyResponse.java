@@ -1,5 +1,7 @@
 package ca.sheridancollege.restfulhousekeeping.models;
 
+import java.time.LocalTime;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,4 +22,7 @@ public class PropertyResponse {
     private String postalCode;
     private String country;
     private String accessInstructions;
+    private LocalTime checkoutTime;
+    private LocalTime checkinTime;
+    private Boolean airbnbCalendarConnected;
 }

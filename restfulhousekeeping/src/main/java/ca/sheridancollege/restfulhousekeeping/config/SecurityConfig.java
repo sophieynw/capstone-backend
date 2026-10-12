@@ -35,12 +35,14 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		return http.authorizeHttpRequests(authorize -> authorize
-				.requestMatchers(
-					    "/api/v1/auth/register",
-					    "/api/v1/auth/authenticate",
-					    "/ws",
-					    "/ws/**"
-					).permitAll()
+						.requestMatchers(
+						    "/api/v1/auth/register",
+						    "/api/v1/auth/authenticate",
+						    "/api/v1/auth/username-availability",
+						    "/ws",
+					        "/ws/**"
+						).permitAll()
+						.requestMatchers(HttpMethod.GET, "/organizations").permitAll()
 						// TODO comment or remove for production
 						.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/h2-console/**").permitAll()
 						.anyRequest().authenticated()
