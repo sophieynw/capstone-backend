@@ -41,6 +41,7 @@ public class SecurityConfig {
 					        "/ws/**"
 						).permitAll()
 						.requestMatchers(HttpMethod.GET, "/organizations").permitAll()
+						.requestMatchers(HttpMethod.POST, "/email").permitAll()
 						// TODO comment or remove for production
 						.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/h2-console/**").permitAll()
 						.anyRequest().authenticated()
