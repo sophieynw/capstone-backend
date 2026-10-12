@@ -39,6 +39,15 @@ public class CleaningController {
 		return cleaningResponseService.getMyUpcomingCleanings(userId);
 	}
 
+	// GET all completed cleanings by cleaner ID
+	@GetMapping("/completed/{userId}")
+	public List<CleaningResponse> getCompletedCleanings(@PathVariable Long userId) {
+    	return cleaningRepository.findByCleanerIdAndIsCompleteTrue(userId)
+            .stream()
+            .map(cleaningResponseService::toCleaningResponse)
+            .toList();
+	}	
+
 	// GET first cleaning by property ID
 	@GetMapping("/upcoming/{propertyId}/first")
 	public ResponseEntity<CleaningResponse> getNextCleaningByPropertyId(@PathVariable Long propertyId) {
