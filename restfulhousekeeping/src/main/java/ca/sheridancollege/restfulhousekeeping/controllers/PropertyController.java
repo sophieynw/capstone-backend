@@ -1,19 +1,20 @@
 package ca.sheridancollege.restfulhousekeeping.controllers;
 
-import java.util.List;
-
-import ca.sheridancollege.restfulhousekeeping.models.UpdatePropertyRequest;import jakarta.transaction.Transactional;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import ca.sheridancollege.restfulhousekeeping.beans.Property;
+import ca.sheridancollege.restfulhousekeeping.beans.User;
 import ca.sheridancollege.restfulhousekeeping.models.CreatePropertyRequest;
 import ca.sheridancollege.restfulhousekeeping.models.PropertyResponse;
+import ca.sheridancollege.restfulhousekeeping.models.UpdatePropertyRequest;
 import ca.sheridancollege.restfulhousekeeping.repositories.PropertyRepository;
 import ca.sheridancollege.restfulhousekeeping.services.PropertyResponseService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @AllArgsConstructor
@@ -24,22 +25,19 @@ public class PropertyController {
     private final PropertyRepository propertyRepository;
     private final PropertyResponseService propertyResponseService;
 
+    // GET ALL properties for authenticated manager
     @GetMapping
-    public List<PropertyResponse> getAll() {
-        return propertyResponseService.getAllProperties();
+    public ResponseEntity<List<PropertyResponse>> getAll(@AuthenticationPrincipal User manager) {
+        List<PropertyResponse> properties = propertyResponseService.getPropertiesForManager(manager.getId());
+        return ResponseEntity.ok(properties);
     }
 
+    // GET property by propertyId, scoped to manager's own properties
     @GetMapping("/{id}")
-    public ResponseEntity<PropertyResponse> getById(@PathVariable Long id) {
-        return propertyResponseService.getPropertyById(id)
+    public ResponseEntity<PropertyResponse> getById(@PathVariable Long id, @AuthenticationPrincipal User manager) {
+        return propertyResponseService.getPropertyById(id, manager.getId())
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
-    }
-
-    // Get ALL properties by userId
-    @GetMapping("/managers/{userId}")
-    public List<PropertyResponse> getPropertyByUserId(@PathVariable Long userId) {
-        return propertyResponseService.getPropertyByUserId(userId);
     }
 
     // CREATE new property record
@@ -64,15 +62,6 @@ public class PropertyController {
             .map(ResponseEntity::ok)
             .orElse(ResponseEntity.notFound().build());
 }
-
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity<Void> delete(@PathVariable Long id) {
-//        if (!propertyRepository.existsById(id)) {
-//            return ResponseEntity.notFound().build();
-//        }
-//        propertyRepository.deleteById(id);
-//        return ResponseEntity.noContent().build();
-//    }
 
     @DeleteMapping("/{id}")
     @Transactional

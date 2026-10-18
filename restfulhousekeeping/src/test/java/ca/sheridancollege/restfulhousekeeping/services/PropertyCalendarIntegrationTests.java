@@ -1,17 +1,16 @@
 package ca.sheridancollege.restfulhousekeeping.services;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
-
 import ca.sheridancollege.restfulhousekeeping.beans.Property;
 import ca.sheridancollege.restfulhousekeeping.beans.PropertyCalendarIntegration;
 import ca.sheridancollege.restfulhousekeeping.models.PropertyResponse;
 import ca.sheridancollege.restfulhousekeeping.repositories.PropertyCalendarIntegrationRepository;
 import ca.sheridancollege.restfulhousekeeping.repositories.PropertyRepository;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @Transactional
@@ -37,9 +36,13 @@ class PropertyCalendarIntegrationTests {
 		);
 		property.setCalendarIntegration(integration);
 
+		Long propertyId = property.getId();
+		Long managerId = property.getManager().getId();
+
 		PropertyResponse response = propertyResponseService
-			.getPropertyById(property.getId())
-			.orElseThrow();
+				.getPropertyById(propertyId, managerId)
+				.orElseThrow();
+
 		assertThat(response.getAirbnbCalendarConnected()).isTrue();
 
 		propertyRepository.delete(property);
