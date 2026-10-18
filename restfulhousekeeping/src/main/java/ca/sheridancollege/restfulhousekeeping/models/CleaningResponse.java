@@ -13,11 +13,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CleaningResponse {
-		
+
 	private Long id;
 	private Long managerId;
 	private Long cleanerId;
-	private Long propertyId; // TODO: remove
 	private PropertyResponse property;
 	private LocalDateTime dateTimeStart;
 	private LocalDateTime dateTimeEnd;

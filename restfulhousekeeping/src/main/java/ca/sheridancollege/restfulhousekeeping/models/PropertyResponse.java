@@ -13,8 +13,8 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PropertyResponse {
+
     private Long id;
-    private Long managerId;
     private String name;
     private String street;
     private String unit;
@@ -27,4 +27,5 @@ public class PropertyResponse {
     private LocalTime checkinTime;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Boolean airbnbCalendarConnected;
+
 }

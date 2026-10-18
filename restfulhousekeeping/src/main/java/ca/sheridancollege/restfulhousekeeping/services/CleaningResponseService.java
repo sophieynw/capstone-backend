@@ -88,7 +88,6 @@ public class CleaningResponseService {
 						? null
 						: cleaning.getCleaner().getId()
     			)
-    			.propertyId(cleaning.getProperty().getId())
                 .property(propertyResponseService.toCleaningPropertyResponse(
                         cleaning.getProperty()
                 ))

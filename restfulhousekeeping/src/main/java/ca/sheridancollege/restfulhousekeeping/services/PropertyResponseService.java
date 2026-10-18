@@ -149,7 +149,6 @@ public class PropertyResponseService {
 
         return PropertyResponse.builder()
                 .id(property.getId())
-                .managerId(property.getManager().getId())
                 .name(property.getName())
                 .street(property.getStreet())
                 .unit(property.getUnit())
