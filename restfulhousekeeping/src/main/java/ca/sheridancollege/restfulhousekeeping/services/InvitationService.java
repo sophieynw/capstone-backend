@@ -9,7 +9,7 @@ import ca.sheridancollege.restfulhousekeeping.repositories.UserRepository;
 import jakarta.transaction.Transactional;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
+import org.springframework.mail.MailException;import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
@@ -21,15 +21,18 @@ public class InvitationService {
     private final InvitationRepository invitationRepository;
     private final UserRepository userRepository;
     private final OrganizationRepository organizationRepository;
+    private final EmailService emailService;
 
     public InvitationService(
             InvitationRepository invitationRepository,
             UserRepository userRepository,
-            OrganizationRepository organizationRepository) {
+            OrganizationRepository organizationRepository,
+            EmailService emailService) {
 
         this.invitationRepository = invitationRepository;
         this.userRepository = userRepository;
         this.organizationRepository = organizationRepository;
+        this.emailService = emailService;
     }
 
     @Transactional
@@ -78,7 +81,25 @@ public class InvitationService {
         invitation.setCreatedAt(now);
         invitation.setExpiresAt(now.plusDays(7));
 
-        return toResponse(invitationRepository.save(invitation));
+        Invitation saved = invitationRepository.save(invitation);
+
+        try {
+        emailService.sendEmail(
+                cleaner.getEmail(),
+                "RESTful Housekeeping: Invitation",
+                "Hello " + cleaner.getFirstName() + ",\n\n"
+                        + "You have been invited to work with "
+                        + manager.getFirstName() + " " + manager.getLastName()
+                        + " at " + organization.getName() + ".\n\n"
+                        + "Please open RESTful Housekeeping to review your invitation.\n\n"
+                        + "Regards,\nRESTful Housekeeping");
+        } catch (MailException e) {
+            throw new ResponseStatusException(
+                HttpStatus.BAD_GATEWAY,
+                "Could not send invitation email", e);
+    }
+
+    return toResponse(saved);
     }
 
     @Transactional
