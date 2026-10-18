@@ -1,14 +1,5 @@
 package ca.sheridancollege.restfulhousekeeping.services;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
-
 import ca.sheridancollege.restfulhousekeeping.beans.Cleaning;
 import ca.sheridancollege.restfulhousekeeping.beans.Role;
 import ca.sheridancollege.restfulhousekeeping.beans.User;
@@ -16,6 +7,14 @@ import ca.sheridancollege.restfulhousekeeping.models.CleaningResponse;
 import ca.sheridancollege.restfulhousekeeping.repositories.CleaningRepository;
 import ca.sheridancollege.restfulhousekeeping.repositories.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -24,6 +23,7 @@ public class CleaningResponseService {
     private final CleaningRepository cleaningRepository;
     private final UserRepository userRepository;
     private final CleaningChecklistItemResponseService cciResponseService;
+    private final PropertyResponseService propertyResponseService;
 
     public List<CleaningResponse> getMyUpcomingCleanings(Long userId) {
 
@@ -89,6 +89,9 @@ public class CleaningResponseService {
 						: cleaning.getCleaner().getId()
     			)
     			.propertyId(cleaning.getProperty().getId())
+                .property(propertyResponseService.toCleaningPropertyResponse(
+                        cleaning.getProperty()
+                ))
     			.dateTimeStart(cleaning.getDateTimeStart())
                 .dateTimeEnd(cleaning.getDateTimeEnd())
                 .dateTimeStarted(cleaning.getDateTimeStarted())

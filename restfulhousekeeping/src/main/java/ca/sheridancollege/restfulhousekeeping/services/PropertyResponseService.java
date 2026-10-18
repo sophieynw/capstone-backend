@@ -143,7 +143,10 @@ public class PropertyResponseService {
         });
     }
 
-    private PropertyResponse toPropertyResponse(Property property) {
+    private PropertyResponse buildPropertyResponse(
+            Property property,
+            Boolean airbnbCalendarConnected) {
+
         return PropertyResponse.builder()
                 .id(property.getId())
                 .managerId(property.getManager().getId())
@@ -157,11 +160,20 @@ public class PropertyResponseService {
                 .accessInstructions(property.getAccessInstructions())
                 .checkoutTime(property.getCheckoutTime())
                 .checkinTime(property.getCheckinTime())
-                .airbnbCalendarConnected(
-                        calendarIntegrationRepository
-                                .existsByProperty_IdAndEnabledTrue(property.getId())
-                )
+                .airbnbCalendarConnected(airbnbCalendarConnected)
                 .build();
+    }
+
+    // for fetching property info for managers
+    private PropertyResponse toPropertyResponse(Property property) {
+        Boolean airbnbCalendarConnected =
+                calendarIntegrationRepository.existsByProperty_IdAndEnabledTrue(property.getId());
+        return buildPropertyResponse(property, airbnbCalendarConnected);
+    }
+
+    // for fetching property info for cleaners, omitting airbnbCalendarConnected info
+    public PropertyResponse toCleaningPropertyResponse(Property property) {
+        return buildPropertyResponse(property, null);
     }
 
 }
