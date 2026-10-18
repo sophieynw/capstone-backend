@@ -1,19 +1,20 @@
 package ca.sheridancollege.restfulhousekeeping.models;
 
-import java.time.LocalTime;
-
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalTime;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class PropertyResponse {
+
     private Long id;
-    private Long managerId;
     private String name;
     private String street;
     private String unit;
@@ -24,5 +25,7 @@ public class PropertyResponse {
     private String accessInstructions;
     private LocalTime checkoutTime;
     private LocalTime checkinTime;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Boolean airbnbCalendarConnected;
+
 }
