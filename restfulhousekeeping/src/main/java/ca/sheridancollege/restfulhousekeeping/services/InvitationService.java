@@ -192,9 +192,22 @@ public class InvitationService {
         userRepository.save(managedCleaner);
 
         invitation.setStatus(InvitationStatus.ACCEPTED);
+        Invitation savedInvite = invitationRepository.save(invitation);
 
-        return toResponse(invitationRepository.save(invitation));
+        closeOtherPendingInvitations(managedCleaner.getId(), savedInvite.getId());
+        return toResponse(savedInvite);
     }
+
+    private void closeOtherPendingInvitations(Long cleanerId, Long acceptedId) {
+    List<Invitation> others = invitationRepository
+            .findByCleanerIdAndStatus(cleanerId, InvitationStatus.PENDING)
+            .stream()
+            .filter(i -> !i.getId().equals(acceptedId))
+            .toList();
+
+    others.forEach(i -> i.setStatus(InvitationStatus.EXPIRED));
+    invitationRepository.saveAll(others);
+}
 
     // Decline an invitation.
     @Transactional
