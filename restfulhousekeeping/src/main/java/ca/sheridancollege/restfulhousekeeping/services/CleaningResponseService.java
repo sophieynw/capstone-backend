@@ -78,6 +78,62 @@ public class CleaningResponseService {
 
         return toCleaningResponse(cleaning);
     }
+
+    @Transactional
+    public CleaningResponse updateCleaner(
+            Long cleaningId,
+            Long cleanerId,
+            User manager) {
+        if (manager == null || manager.getRole() != Role.MANAGER) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "Only managers can assign cleaners"
+            );
+        }
+
+        Cleaning cleaning = cleaningRepository.findById(cleaningId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Cleaning not found"
+                ));
+
+        if (!cleaning.getManager().getId().equals(manager.getId())) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "This cleaning is not managed by the current manager"
+            );
+        }
+
+        User cleaner = null;
+
+        if (cleanerId != null) {
+            cleaner = userRepository.findById(cleanerId)
+                    .orElseThrow(() -> new ResponseStatusException(
+                            HttpStatus.NOT_FOUND,
+                            "Cleaner not found"
+                    ));
+
+            if (cleaner.getRole() != Role.CLEANER) {
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "The selected user is not a cleaner"
+                );
+            }
+
+            if (manager.getOrganization() == null
+                    || cleaner.getOrganization() == null
+                    || !manager.getOrganization().getId()
+                            .equals(cleaner.getOrganization().getId())) {
+                throw new ResponseStatusException(
+                        HttpStatus.FORBIDDEN,
+                        "The selected cleaner is not on the manager's team"
+                );
+            }
+        }
+
+        cleaning.setCleaner(cleaner);
+        return toCleaningResponse(cleaningRepository.save(cleaning));
+    }
     
     public CleaningResponse toCleaningResponse(Cleaning cleaning) {
     	return CleaningResponse.builder()

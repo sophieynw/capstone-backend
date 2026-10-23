@@ -3,14 +3,18 @@ package ca.sheridancollege.restfulhousekeeping.controllers;
 import ca.sheridancollege.restfulhousekeeping.beans.ChecklistItem;
 import ca.sheridancollege.restfulhousekeeping.beans.Cleaning;
 import ca.sheridancollege.restfulhousekeeping.beans.CleaningSource;
+import ca.sheridancollege.restfulhousekeeping.beans.User;
 import ca.sheridancollege.restfulhousekeeping.models.CleaningResponse;
+import ca.sheridancollege.restfulhousekeeping.models.UpdateCleaningCleanerRequest;
 import ca.sheridancollege.restfulhousekeeping.repositories.ChecklistItemRepository;
 import ca.sheridancollege.restfulhousekeeping.repositories.CleaningRepository;
 import ca.sheridancollege.restfulhousekeeping.services.CleaningResponseService;
+import jakarta.validation.Valid;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -88,6 +92,18 @@ public class CleaningController {
 	public ResponseEntity<CleaningResponse> completeCleaning(@PathVariable Long cleaningId) {
 		CleaningResponse response = cleaningResponseService.completeCleaning(cleaningId);
 		return ResponseEntity.ok(response);
+	}
+
+	@PatchMapping("/{cleaningId}/cleaner")
+	public ResponseEntity<CleaningResponse> updateCleaner(
+			@PathVariable Long cleaningId,
+			@Valid @RequestBody UpdateCleaningCleanerRequest request,
+			@AuthenticationPrincipal User manager) {
+		return ResponseEntity.ok(cleaningResponseService.updateCleaner(
+				cleaningId,
+				request.cleanerId(),
+				manager
+		));
 	}
 
 	@PutMapping("/{id}")

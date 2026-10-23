@@ -41,6 +41,7 @@ public class SecurityConfig {
 					        "/ws/**"
 						).permitAll()
 						.requestMatchers(HttpMethod.GET, "/properties", "/properties/**").hasAuthority("MANAGER")
+						.requestMatchers(HttpMethod.PATCH, "/cleanings/*/cleaner").hasAuthority("MANAGER")
 						.requestMatchers(HttpMethod.GET, "/organizations").permitAll()
 						.requestMatchers(HttpMethod.POST, "/email").permitAll()
 						// TODO comment or remove for production
