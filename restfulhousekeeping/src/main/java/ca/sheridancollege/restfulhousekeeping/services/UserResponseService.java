@@ -27,6 +27,9 @@ public class UserResponseService {
             if (request.getEmail() != null) {
                 existing.setEmail(request.getEmail());
             }
+            if (request.getOrganization() != null && existing.getOrganization() == null) {
+                existing.setOrganization(request.getOrganization());
+            }
             User saved = userRepository.save(existing);
             return toUserResponse(saved);
         });
