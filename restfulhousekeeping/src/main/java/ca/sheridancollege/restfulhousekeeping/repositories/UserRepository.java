@@ -15,8 +15,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	
 	public List<User> findAllByOrganization_IdAndRole(Long organizationId, Role role);
 
+	public List<User> findAllByRoleAndOrganizationIsNull(Role role);
+
 	public Optional<User> findFirstByOrganization_IdAndRoleOrderByIdAsc(Long organizationId, Role role);
-	
+
 	public boolean existsByUsername(String username);
 	
 }

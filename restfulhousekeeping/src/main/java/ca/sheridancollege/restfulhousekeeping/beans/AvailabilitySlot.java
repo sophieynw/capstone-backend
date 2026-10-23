@@ -18,7 +18,7 @@ public class AvailabilitySlot {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	@ManyToOne
-	@JoinColumn(name="availabilityId", nullable=false)
+	@JoinColumn(name="availabilityId")
 	private Availability availability;
 
 	@ManyToOne
