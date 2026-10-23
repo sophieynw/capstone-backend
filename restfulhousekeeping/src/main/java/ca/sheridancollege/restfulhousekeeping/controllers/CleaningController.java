@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -52,8 +53,11 @@ public class CleaningController {
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<Cleaning> getById(@PathVariable Long id) {
-		return cleaningRepository.findById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+	public ResponseEntity<CleaningResponse> getById(@PathVariable Long id) {
+		return cleaningRepository.findById(id)
+				.map(cleaningResponseService::toCleaningResponse)
+				.map(ResponseEntity::ok)
+				.orElse(ResponseEntity.notFound().build());
 	}
 
 	// CREATE new cleaning record
@@ -119,10 +123,17 @@ public class CleaningController {
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> delete(@PathVariable Long id) {
-		if (!cleaningRepository.existsById(id)) {
-			return ResponseEntity.notFound().build();
+		Cleaning cleaning = cleaningRepository.findById(id)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+		if (Boolean.TRUE.equals(cleaning.getIsComplete())) {
+			throw new ResponseStatusException(
+					HttpStatus.CONFLICT,
+					"A completed cleaning cannot be deleted"
+			);
 		}
-		cleaningRepository.deleteById(id);
+
+		cleaningRepository.delete(cleaning);
 		return ResponseEntity.noContent().build();
 	}
 

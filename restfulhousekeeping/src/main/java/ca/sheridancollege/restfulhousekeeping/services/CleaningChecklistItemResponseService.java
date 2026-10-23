@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import ca.sheridancollege.restfulhousekeeping.beans.ChecklistItem;
+import ca.sheridancollege.restfulhousekeeping.beans.CleaningChecklistItem;
 import ca.sheridancollege.restfulhousekeeping.models.CleaningChecklistItemResponse;
 import ca.sheridancollege.restfulhousekeeping.repositories.CleaningChecklistItemRepository;
 import lombok.AllArgsConstructor;
@@ -16,35 +17,25 @@ public class CleaningChecklistItemResponseService {
 	private final CleaningChecklistItemRepository cleaningChecklistItemRepository;
 
 	public List<CleaningChecklistItemResponse> getItemsForCleaning(
-	        Long cleaningId) {
+			Long cleaningId) {
 
-	    return cleaningChecklistItemRepository
-            .findAllByCleaning_Id(cleaningId)
-            .stream()
-            .map(cci -> {
+		return cleaningChecklistItemRepository
+				.findAllByCleaning_Id(cleaningId)
+				.stream()
+				.map(this::toResponse)
+				.toList();
+	}
 
-                ChecklistItem checklistItem =
-                        cci.getChecklistItem();
+	public CleaningChecklistItemResponse toResponse(CleaningChecklistItem item) {
+		ChecklistItem checklistItem = item.getChecklistItem();
 
-                return new CleaningChecklistItemResponse(
-                        cci.getId(),
-
-                        checklistItem != null
-                                ? checklistItem.getDescription()
-                                : cci.getCustomDescription(),
-
-                        checklistItem != null
-                                ? checklistItem.getFrequencyDays()
-                                : null,
-
-                        checklistItem != null
-                                ? checklistItem.getLastCompleted()
-                                : null,
-
-                        cci.getIsComplete()
-                );
-            })
-            .toList();
+		return new CleaningChecklistItemResponse(
+				item.getId(),
+				checklistItem != null
+						? checklistItem.getDescription()
+						: item.getCustomDescription(),
+				item.getIsComplete()
+		);
 	}
 
 }

@@ -239,7 +239,7 @@ public class BootstrapData implements CommandLineRunner {
 		ChecklistItem floors3 = generateChecklistItem(property3, "Vacuum carpets and mop floors", 1, 1);
 		ChecklistItem bathroom3 = generateChecklistItem(property3, "Clean and disinfect bathrooms", 1, 4);
 		ChecklistItem bedding3 = generateChecklistItem(property3, "Change bed linens", 1, 5);
-		ChecklistItem supplies3 = generateChecklistItem(property2, "Check if supplies need to be replaced", 30, 4);
+		ChecklistItem supplies3 = generateChecklistItem(property3, "Check if supplies need to be replaced", 30, 4);
 		ChecklistItem ceilingFans3 = generateChecklistItem(property3, "Dust ceiling fans", 15, 6);
 		ChecklistItem furnaceFilter3 = generateChecklistItem(property3, "Replace furnace filter", 45, 7);
 		ChecklistItem windows3 = generateChecklistItem(property3, "Clean interior windows", 20, 3);

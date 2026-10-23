@@ -1,52 +1,50 @@
-//package ca.sheridancollege.restfulhousekeeping.controllers;
-//
-//import java.util.List;
-//import org.springframework.http.ResponseEntity;
-//import org.springframework.web.bind.annotation.*;
-//import ca.sheridancollege.restfulhousekeeping.beans.CleaningChecklistItem;
-//import ca.sheridancollege.restfulhousekeeping.repositories.CleaningChecklistItemRepository;
-//
-//@RestController
-//@RequestMapping("/cleaning-checklist-items")
-//public class CleaningChecklistItemController {
-//
-//    private final CleaningChecklistItemRepository cleaningChecklistItemRepository;
-//
-//    public CleaningChecklistItemController(CleaningChecklistItemRepository cleaningChecklistItemRepository) {
-//        this.cleaningChecklistItemRepository = cleaningChecklistItemRepository;
-//    }
-//
-//    @GetMapping
-//    public List<CleaningChecklistItem> getAll() {
-//        return cleaningChecklistItemRepository.findAll();
-//    }
-//
-//    @GetMapping("/{id}")
-//    public ResponseEntity<CleaningChecklistItem> getById(@PathVariable Long id) {
-//        return cleaningChecklistItemRepository.findById(id)
-//                .map(ResponseEntity::ok)
-//                .orElse(ResponseEntity.notFound().build());
-//    }
-//
-//    @PostMapping
-//    public CleaningChecklistItem create(@RequestBody CleaningChecklistItem item) {
-//        return cleaningChecklistItemRepository.save(item);
-//    }
-//
-//    @PutMapping("/{id}")
-//    public ResponseEntity<CleaningChecklistItem> update(@PathVariable Long id, @RequestBody CleaningChecklistItem updated) {
-//        return cleaningChecklistItemRepository.findById(id).map(existing -> {
-//            existing.setIsComplete(updated.getIsComplete());
-//            return ResponseEntity.ok(cleaningChecklistItemRepository.save(existing));
-//        }).orElse(ResponseEntity.notFound().build());
-//    }
-//
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity<Void> delete(@PathVariable Long id) {
-//        if (!cleaningChecklistItemRepository.existsById(id)) {
-//            return ResponseEntity.notFound().build();
-//        }
-//        cleaningChecklistItemRepository.deleteById(id);
-//        return ResponseEntity.noContent().build();
-//    }
-//}
+package ca.sheridancollege.restfulhousekeeping.controllers;
+
+import ca.sheridancollege.restfulhousekeeping.beans.User;
+import ca.sheridancollege.restfulhousekeeping.models.CleaningChecklistItemResponse;
+import ca.sheridancollege.restfulhousekeeping.models.CreateCleaningChecklistItemRequest;
+import ca.sheridancollege.restfulhousekeeping.services.CleaningChecklistItemService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@AllArgsConstructor
+@RequestMapping("/cleanings/{cleaningId}/checklist-items")
+@SecurityRequirement(name = "Bearer Authentication")
+public class CleaningChecklistItemController {
+
+    private final CleaningChecklistItemService checklistItemService;
+
+    @PostMapping
+    public ResponseEntity<CleaningChecklistItemResponse> create(
+            @PathVariable Long cleaningId,
+            @Valid @RequestBody CreateCleaningChecklistItemRequest request,
+            @AuthenticationPrincipal User manager) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                checklistItemService.addCustomItem(
+                        cleaningId,
+                        request.description(),
+                        manager
+                )
+        );
+    }
+
+    @DeleteMapping("/{itemId}")
+    public ResponseEntity<Void> delete(
+            @PathVariable Long cleaningId,
+            @PathVariable Long itemId,
+            @AuthenticationPrincipal User manager) {
+        checklistItemService.deleteItem(cleaningId, itemId, manager);
+        return ResponseEntity.noContent().build();
+    }
+}

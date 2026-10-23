@@ -104,6 +104,13 @@ public class CleaningResponseService {
             );
         }
 
+        if (Boolean.TRUE.equals(cleaning.getIsComplete())) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "A completed cleaning cannot be reassigned"
+            );
+        }
+
         User cleaner = null;
 
         if (cleanerId != null) {

@@ -3,6 +3,7 @@ package ca.sheridancollege.restfulhousekeeping.services;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -142,6 +143,20 @@ class CleaningResponseServiceTests {
     }
 
     @Test
+    void rejectsReassignmentAfterCleaningIsComplete() {
+        cleaning.setIsComplete(true);
+        cleaningRepository.save(cleaning);
+
+        assertThatThrownBy(() -> service.updateCleaner(
+                cleaning.getId(), teamCleaner.getId(), manager))
+                .isInstanceOfSatisfying(ResponseStatusException.class, exception ->
+                        assertThat(exception.getStatusCode())
+                                .isEqualTo(HttpStatus.CONFLICT));
+
+        assertThat(cleaning.getCleaner()).isNull();
+    }
+
+    @Test
     void cleanerRoleCannotAccessAssignmentEndpoint() throws Exception {
         UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken(
@@ -157,6 +172,41 @@ class CleaningResponseServiceTests {
                 .andExpect(status().isForbidden());
 
         assertThat(cleaning.getCleaner()).isNull();
+    }
+
+    @Test
+    void managerCanDeleteIncompleteCleaning() throws Exception {
+        UsernamePasswordAuthenticationToken authentication =
+                new UsernamePasswordAuthenticationToken(
+                        manager,
+                        null,
+                        manager.getAuthorities()
+                );
+
+        mvc.perform(delete("/cleanings/{cleaningId}", cleaning.getId())
+                        .with(authentication(authentication)))
+                .andExpect(status().isNoContent());
+
+        assertThat(cleaningRepository.existsById(cleaning.getId())).isFalse();
+    }
+
+    @Test
+    void managerCannotDeleteCompletedCleaning() throws Exception {
+        cleaning.setIsComplete(true);
+        cleaningRepository.save(cleaning);
+
+        UsernamePasswordAuthenticationToken authentication =
+                new UsernamePasswordAuthenticationToken(
+                        manager,
+                        null,
+                        manager.getAuthorities()
+                );
+
+        mvc.perform(delete("/cleanings/{cleaningId}", cleaning.getId())
+                        .with(authentication(authentication)))
+                .andExpect(status().isConflict());
+
+        assertThat(cleaningRepository.existsById(cleaning.getId())).isTrue();
     }
 
     private void assertForbidden(Runnable action) {
