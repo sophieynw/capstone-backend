@@ -45,6 +45,7 @@ public class SecurityConfig {
 						.requestMatchers(HttpMethod.POST, "/email").permitAll()
 						// TODO comment or remove for production
 						.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/h2-console/**").permitAll()
+						.requestMatchers("/availability-slots", "/availability-slots/**").hasAuthority("CLEANER")
 						.anyRequest().authenticated()
 				)
 				.csrf(csrf -> csrf.disable())
