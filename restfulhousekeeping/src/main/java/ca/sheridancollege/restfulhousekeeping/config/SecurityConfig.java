@@ -42,7 +42,9 @@ public class SecurityConfig {
 						).permitAll()
 						.requestMatchers(HttpMethod.GET, "/properties", "/properties/**").hasAuthority("MANAGER")
 						.requestMatchers(HttpMethod.GET, "/organizations").permitAll()
+						.requestMatchers(HttpMethod.POST, "/email").permitAll()
 						// TODO comment or remove for production
+						.requestMatchers("/availability-slots", "/availability-slots/**").hasAuthority("CLEANER")
 						.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/h2-console/**","/error").permitAll()
 						.anyRequest().authenticated()
 				)
