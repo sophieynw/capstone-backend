@@ -1,21 +1,15 @@
 package ca.sheridancollege.restfulhousekeeping.controllers;
 
-import java.security.Principal;
-import java.util.List;
-
-import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import ca.sheridancollege.restfulhousekeeping.models.ChatMessageResponse;
 import ca.sheridancollege.restfulhousekeeping.models.ConversationResponse;
 import ca.sheridancollege.restfulhousekeeping.services.ChatService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/chat")
@@ -30,6 +24,12 @@ public class ChatController {
             @PathVariable Long userId,
             Principal principal) {
         return chatService.findOrCreateConversation(userId, principal);
+    }
+
+    @PostMapping("/conversations/manager")
+    public ConversationResponse findOrCreateManagerConversation(
+            Principal principal) {
+        return chatService.findOrCreateManagerConversation(principal);
     }
 
     @GetMapping("/conversations")

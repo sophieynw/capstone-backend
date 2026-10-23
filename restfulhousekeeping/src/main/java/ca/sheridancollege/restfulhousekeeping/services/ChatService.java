@@ -1,17 +1,5 @@
 package ca.sheridancollege.restfulhousekeeping.services;
 
-import java.security.Principal;
-import java.util.List;
-import java.util.Objects;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
-
 import ca.sheridancollege.restfulhousekeeping.beans.ChatMessage;
 import ca.sheridancollege.restfulhousekeeping.beans.Conversation;
 import ca.sheridancollege.restfulhousekeeping.beans.Role;
@@ -23,6 +11,17 @@ import ca.sheridancollege.restfulhousekeeping.repositories.ChatMessageRepository
 import ca.sheridancollege.restfulhousekeeping.repositories.ConversationRepository;
 import ca.sheridancollege.restfulhousekeeping.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.security.Principal;
+import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -124,6 +123,42 @@ public class ChatService {
             conversation,
             currentUser
         );
+    }
+
+    /**
+     * Find or create conversation with manager.
+     */
+    @Transactional
+    public ConversationResponse findOrCreateManagerConversation(
+            Principal principal) {
+
+        User cleaner = getCurrentUser(principal);
+
+        if (cleaner.getRole() != Role.CLEANER) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Only cleaners can use this endpoint"
+            );
+        }
+
+        if (cleaner.getOrganization() == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "The cleaner does not belong to an organization"
+            );
+        }
+
+        User manager = userRepository
+                .findFirstByOrganization_IdAndRoleOrderByIdAsc(
+                        cleaner.getOrganization().getId(),
+                        Role.MANAGER
+                )
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "No manager belongs to this organization"
+                ));
+
+        return findOrCreateConversation(manager.getId(), principal);
     }
 
     /**
