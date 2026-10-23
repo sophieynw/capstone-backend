@@ -43,7 +43,7 @@ public class SecurityConfig {
 						.requestMatchers(HttpMethod.GET, "/properties", "/properties/**").hasAuthority("MANAGER")
 						.requestMatchers(HttpMethod.GET, "/organizations").permitAll()
 						// TODO comment or remove for production
-						.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/h2-console/**").permitAll()
+						.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/h2-console/**","/error").permitAll()
 						.anyRequest().authenticated()
 				)
 				.csrf(csrf -> csrf.disable())
