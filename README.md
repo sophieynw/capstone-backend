@@ -68,10 +68,10 @@ Managers can create properties and cleanings, reuse property-specific checklists
 - Spring Boot 4
 - Spring MVC
 - Spring Data JPA
+- H2 for local development
+- MySQL for Docker and cloud deployment
 - Spring Security
 - JSON Web Tokens
-- H2 in-memory database
-- MySQL connector
 - Springdoc OpenAPI and Swagger UI
 - Maven
 - Lombok
@@ -97,7 +97,8 @@ Managers can create properties and cleanings, reuse property-specific checklists
                    │ JPA
                    ▼
 ┌──────────────────────────────────────┐
-│ H2 in-memory development database    │
+│ H2 locally / persistent MySQL when   │
+│ running with Docker or in the cloud  │
 └──────────────────────────────────────┘
 ```
 
@@ -163,6 +164,8 @@ Development tools are available at:
 - H2 console: `http://localhost:50000/h2-console`
 
 The backend uses `jdbc:h2:mem:testdb`. Because this is an in-memory database, its contents are reset whenever the server restarts. The application bootstrap class loads sample organizations, users, properties, checklists, and cleanings for development.
+
+For local Docker with persistent MySQL, Docker Hub publishing, and Render deployment instructions, see [`restfulhousekeeping/README.Docker.md`](restfulhousekeeping/README.Docker.md).
 
 ### 3. Configure the frontend connection
 

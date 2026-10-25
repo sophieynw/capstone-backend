@@ -68,6 +68,10 @@ RUN java -Djarmode=layertools -jar target/app.jar extract --destination target/e
 # eclipse-temurin@sha256:99cede493dfd88720b610eb8077c8688d3cca50003d76d1d539b0efc8cca72b4.
 FROM eclipse-temurin:25-jre-jammy AS final
 
+# Containers use MySQL by default. Runtime environment variables provide the
+# database connection details and can override this profile when needed.
+ENV SPRING_PROFILES_ACTIVE=mysql
+
 # Create a non-privileged user that the app will run under.
 # See https://docs.docker.com/go/dockerfile-user-best-practices/
 ARG UID=10001

@@ -6,7 +6,10 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-import ca.sheridancollege.restfulhousekeeping.services.EmailService;import org.springframework.boot.CommandLineRunner;
+import ca.sheridancollege.restfulhousekeeping.services.EmailService;
+
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -32,6 +35,7 @@ import lombok.AllArgsConstructor;
 
 @Component
 @AllArgsConstructor
+@ConditionalOnProperty(name = "app.bootstrap.enabled", havingValue = "true")
 public class BootstrapData implements CommandLineRunner {
 
 	private final OrganizationRepository organizationRepository;
