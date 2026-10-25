@@ -12,13 +12,15 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
 	
 	public Optional<User> findByUsernameIgnoreCase(String username);
+
+	public Optional<User> findByEmailIgnoreCase(String email);
 	
 	public List<User> findAllByOrganization_IdAndRole(Long organizationId, Role role);
-
-	public List<User> findAllByRoleAndOrganizationIsNull(Role role);
 
 	public Optional<User> findFirstByOrganization_IdAndRoleOrderByIdAsc(Long organizationId, Role role);
 
 	public boolean existsByUsernameIgnoreCase(String username);
+
+	public boolean existsByEmailIgnoreCase(String email);
 	
 }

@@ -56,11 +56,13 @@ class CleaningResponseServiceTests {
         );
         manager = userRepository.save(User.builder()
                 .username("assignment-manager")
+                .email("assignment-manager@example.com")
                 .role(Role.MANAGER)
                 .organization(managerOrganization)
                 .build());
         teamCleaner = userRepository.save(User.builder()
                 .username("assignment-cleaner")
+                .email("assignment-cleaner@example.com")
                 .role(Role.CLEANER)
                 .organization(managerOrganization)
                 .build());
@@ -102,6 +104,7 @@ class CleaningResponseServiceTests {
     void rejectsCleaningManagedBySomeoneElse() {
         User otherManager = userRepository.save(User.builder()
                 .username("other-assignment-manager")
+                .email("other-assignment-manager@example.com")
                 .role(Role.MANAGER)
                 .organization(managerOrganization)
                 .build());
@@ -121,6 +124,7 @@ class CleaningResponseServiceTests {
         );
         User outsider = userRepository.save(User.builder()
                 .username("outsider-assignment-cleaner")
+                .email("outsider-assignment-cleaner@example.com")
                 .role(Role.CLEANER)
                 .organization(otherOrganization)
                 .build());

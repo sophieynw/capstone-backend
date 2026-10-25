@@ -5,6 +5,7 @@ import ca.sheridancollege.restfulhousekeeping.models.CreatePropertyRequest;
 import ca.sheridancollege.restfulhousekeeping.models.PropertyResponse;
 import ca.sheridancollege.restfulhousekeeping.models.UpdatePropertyRequest;
 import ca.sheridancollege.restfulhousekeeping.repositories.PropertyRepository;
+import ca.sheridancollege.restfulhousekeeping.services.ImageKitService;
 import ca.sheridancollege.restfulhousekeeping.services.PropertyResponseService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
@@ -13,7 +14,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -24,6 +27,7 @@ public class PropertyController {
 
     private final PropertyRepository propertyRepository;
     private final PropertyResponseService propertyResponseService;
+    private final ImageKitService imageKitService;
 
     // GET ALL properties for authenticated manager
     @GetMapping
@@ -61,7 +65,38 @@ public class PropertyController {
         return propertyResponseService.updateProperty(id, updated)
             .map(ResponseEntity::ok)
             .orElse(ResponseEntity.notFound().build());
-}
+    }
+
+    @PostMapping(value = "/{id}/picture", consumes = "multipart/form-data")
+    public ResponseEntity<PropertyResponse> uploadPicture(
+            @PathVariable Long id,
+            @RequestParam("file") MultipartFile file,
+            @AuthenticationPrincipal User manager) throws IOException {
+
+        return propertyRepository.findByIdAndManager_Id(id, manager.getId())
+                .map(property -> {
+                    try {
+                        String previousFileId = property.getPropertyPictureFileId();
+                        ImageKitService.UploadedImage uploaded = imageKitService.upload(
+                                file,
+                                "/restful-housekeeping/property-pictures"
+                        );
+
+                        property.setPropertyPicturePath(uploaded.url());
+                        property.setPropertyPictureFileId(uploaded.fileId());
+                        propertyRepository.save(property);
+                        imageKitService.delete(previousFileId);
+
+                        PropertyResponse response = propertyResponseService
+                                .getPropertyById(id, manager.getId())
+                                .orElseThrow();
+                        return ResponseEntity.ok(response);
+                    } catch (IOException exception) {
+                        throw new RuntimeException(exception);
+                    }
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
 
     @DeleteMapping("/{id}")
     @Transactional

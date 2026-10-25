@@ -37,7 +37,7 @@ public class AuthenticationController {
 		boolean available = !userRepository.existsByUsernameIgnoreCase(normalizedUsername);
 		return Map.of("available", available);
 	}
-	
+
 	// map incoming POST requests to register a new user
 	@PostMapping(value = "/register", consumes = "application/json")
 	public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request) {

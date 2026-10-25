@@ -1,6 +1,7 @@
 package ca.sheridancollege.restfulhousekeeping.controllers;
 
-import ca.sheridancollege.restfulhousekeeping.beans.InvitationStatus;import ca.sheridancollege.restfulhousekeeping.beans.User;
+import ca.sheridancollege.restfulhousekeeping.beans.InvitationStatus;
+import ca.sheridancollege.restfulhousekeeping.beans.User;
 import ca.sheridancollege.restfulhousekeeping.models.InvitationRequest;
 import ca.sheridancollege.restfulhousekeeping.models.InvitationResponse;
 import ca.sheridancollege.restfulhousekeeping.services.InvitationService;
@@ -9,7 +10,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -31,14 +31,11 @@ public class InvitationController {
 
         InvitationResponse response =
                 invitationService.createInvitation(
-                        request.cleanerId(),
-                        request.organizationId(),
+                        request.email(),
                         manager
                 );
 
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(response);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{invitationId}")

@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import ca.sheridancollege.restfulhousekeeping.beans.Organization;
+import ca.sheridancollege.restfulhousekeeping.beans.Role;
 import ca.sheridancollege.restfulhousekeeping.beans.User;
 import ca.sheridancollege.restfulhousekeeping.models.AuthenticationRequest;
 import ca.sheridancollege.restfulhousekeeping.models.AuthenticationResponse;
@@ -27,16 +28,24 @@ public class AuthenticationResponseService {
 	private PasswordEncoder passwordEncoder;
 	private JwtService jwtService;
 	private AuthenticationManager authenticationManager;
+	private InvitationService invitationService;
 	
 	// a method to register a new user in our DB and generate a JWT for them
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public AuthenticationResponse register(RegisterRequest request) {
 		String username = UsernamePolicy.normalizeAndValidate(request.getUsername());
+		String email = EmailPolicy.normalizeAndValidate(request.getEmail());
 		if (userRepository.existsByUsernameIgnoreCase(username)) {
 			throw new ResponseStatusException(
 					HttpStatus.CONFLICT,
 					"Username is already taken."
+				);
+		}
+		if (userRepository.existsByEmailIgnoreCase(email)) {
+			throw new ResponseStatusException(
+					HttpStatus.CONFLICT,
+					"Email is already in use."
 				);
 		}
 		
@@ -45,27 +54,18 @@ public class AuthenticationResponseService {
 				.firstName(request.getFirstName())
 				.lastName(request.getLastName())
 				.username(username)
-				.email(request.getEmail())
+				.email(email)
 				.password(passwordEncoder.encode(request.getPassword()))
 				.phoneNumber(request.getPhoneNumber())
 				.role(request.getRole())
 				.organization(organization)
 				.build();
 		userRepository.save(user);
+		invitationService.reconcilePendingInvitations(user);
 		var jwtToken = jwtService.generateToken(user);
-		UserResponse userResponse = UserResponse.builder()
-		        .id(user.getId())
-		        .organization(user.getOrganization())
-		        .firstName(user.getFirstName())
-		        .lastName(user.getLastName())
-		        .username(user.getUsername())
-		        .email(user.getEmail())
-		        .phoneNumber(user.getPhoneNumber())
-		        .role(user.getRole())
-		        .build();
 		return AuthenticationResponse.builder()
 				.token(jwtToken)
-				.user(userResponse)
+				.user(toUserResponse(user))
 				.build();
 	}
 	
@@ -76,52 +76,54 @@ public class AuthenticationResponseService {
 				username, request.getPassword()));
 		User user = userRepository.findByUsernameIgnoreCase(username).orElseThrow();
 		var jwtToken = jwtService.generateToken(user);
-		UserResponse userResponse = UserResponse.builder()
-		        .id(user.getId())
-		        .organization(user.getOrganization())
-		        .firstName(user.getFirstName())
-		        .lastName(user.getLastName())
-		        .username(user.getUsername())
-		        .email(user.getEmail())
-		        .phoneNumber(user.getPhoneNumber())
-		        .role(user.getRole())
-		        .build();
 		return AuthenticationResponse.builder()
 				.token(jwtToken)
-				.user(userResponse)
+				.user(toUserResponse(user))
+				.build();
+	}
+
+	private UserResponse toUserResponse(User user) {
+		return UserResponse.builder()
+				.id(user.getId())
+				.organization(user.getOrganization())
+				.firstName(user.getFirstName())
+				.lastName(user.getLastName())
+				.username(user.getUsername())
+				.email(user.getEmail())
+				.phoneNumber(user.getPhoneNumber())
+				.role(user.getRole())
 				.build();
 	}
 	
 	// get or create organization
 	private Organization resolveOrganization(RegisterRequest request) {
-	    Long organizationId = request.getOrganizationId();
+		if (request.getRole() == null) {
+			throw new ResponseStatusException(
+					HttpStatus.BAD_REQUEST,
+					"Account type is required"
+			);
+		}
+
 	    String organizationName = request.getOrganizationName();
 
-	    boolean hasId = organizationId != null;
 	    boolean hasName =
 	            organizationName != null && !organizationName.isBlank();
 
-	    if (hasId && hasName) {
+		if (request.getRole() == Role.CLEANER) {
+			if (hasName) {
+				throw new ResponseStatusException(
+						HttpStatus.BAD_REQUEST,
+						"Cleaners cannot join an organization during signup"
+				);
+			}
+			return null;
+		}
+
+	    if (!hasName) {
 	        throw new ResponseStatusException(
 	                HttpStatus.BAD_REQUEST,
-	                "Provide an organization ID or organization name, not both"
+	                "An organization name is required"
 	        );
-	    }
-
-	    if (!hasId && !hasName) {
-	        throw new ResponseStatusException(
-	                HttpStatus.BAD_REQUEST,
-	                "An organization ID or organization name is required"
-	        );
-	    }
-
-	    if (hasId) {
-	        return organizationRepository
-	                .findById(organizationId)
-	                .orElseThrow(() -> new ResponseStatusException(
-	                        HttpStatus.NOT_FOUND,
-	                        "Organization not found"
-	                ));
 	    }
 
 	    Organization organization = Organization.builder()

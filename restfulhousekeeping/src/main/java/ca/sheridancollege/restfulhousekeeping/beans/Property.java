@@ -43,6 +43,8 @@ public class Property {
 	private String postalCode;
 	private String country;
 	private String accessInstructions;
+	private String propertyPicturePath;
+	private String propertyPictureFileId;
 
 	@OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnore

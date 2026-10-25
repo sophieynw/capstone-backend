@@ -41,10 +41,12 @@ public class User implements UserDetails {
 	private String firstName;
 	private String lastName;
 	private String username;
+	@Column(nullable = false, unique = true)
 	private String email;
 	private String password;
 	private String phoneNumber;
 	private String profilePicturePath;
+	private String profilePictureFileId;
 	
 	@Enumerated(EnumType.STRING)
 	@NonNull

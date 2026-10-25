@@ -23,6 +23,7 @@ public class PropertyResponse {
     private String postalCode;
     private String country;
     private String accessInstructions;
+    private String propertyPicturePath;
     private LocalTime checkoutTime;
     private LocalTime checkinTime;
     @JsonInclude(JsonInclude.Include.NON_NULL)
