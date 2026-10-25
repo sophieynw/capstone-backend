@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.time.LocalDateTime;
+
 
 @Data
 @Builder
@@ -19,6 +21,9 @@ public class IssueResponse {
     private String reportedByName;
     private String issueType;
     private String description;
+    private LocalDateTime cleaningStart;
+    private String propertyName;
+    private LocalDateTime reportedAt;
 
     public static IssueResponse fromIssue(Issue issue) {
         User reporter = issue.getReportedBy();
@@ -32,6 +37,11 @@ public class IssueResponse {
                         : null)
                 .issueType(issue.getIssueType())
                 .description(issue.getDescription())
+                .cleaningStart(issue.getCleaning() != null
+                ? issue.getCleaning().getDateTimeStart() : null)
+                .propertyName(issue.getCleaning() != null && issue.getCleaning().getProperty() != null
+                ? issue.getCleaning().getProperty().getName() : null)
+                .reportedAt(issue.getReportedAt())
                 .build();
     }
 }
