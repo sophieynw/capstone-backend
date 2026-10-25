@@ -45,6 +45,7 @@ public class SecurityConfig {
 						.requestMatchers(HttpMethod.PATCH, "/cleanings/*/schedule").hasAuthority("MANAGER")
 						.requestMatchers(HttpMethod.PUT, "/cleanings/*").hasAuthority("MANAGER")
 						.requestMatchers(HttpMethod.DELETE, "/cleanings/*").hasAuthority("MANAGER")
+						.requestMatchers(HttpMethod.DELETE, "/cleaners/*").hasAuthority("MANAGER")
 						.requestMatchers(HttpMethod.POST, "/cleanings/*/checklist-items").hasAuthority("MANAGER")
 						.requestMatchers(HttpMethod.DELETE, "/cleanings/*/checklist-items/*").hasAuthority("MANAGER")
 						.requestMatchers(HttpMethod.GET, "/organizations").permitAll()
