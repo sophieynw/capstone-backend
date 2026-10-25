@@ -3,9 +3,11 @@ package ca.sheridancollege.restfulhousekeeping.controllers;
 import ca.sheridancollege.restfulhousekeeping.beans.ChecklistItem;
 import ca.sheridancollege.restfulhousekeeping.beans.Cleaning;
 import ca.sheridancollege.restfulhousekeeping.beans.CleaningSource;
+import ca.sheridancollege.restfulhousekeeping.beans.Role;
 import ca.sheridancollege.restfulhousekeeping.beans.User;
 import ca.sheridancollege.restfulhousekeeping.models.CleaningResponse;
 import ca.sheridancollege.restfulhousekeeping.models.UpdateCleaningCleanerRequest;
+import ca.sheridancollege.restfulhousekeeping.models.UpdateCleaningScheduleRequest;
 import ca.sheridancollege.restfulhousekeeping.repositories.ChecklistItemRepository;
 import ca.sheridancollege.restfulhousekeeping.repositories.CleaningRepository;
 import ca.sheridancollege.restfulhousekeeping.services.CleaningResponseService;
@@ -110,9 +112,36 @@ public class CleaningController {
 		));
 	}
 
+	@PatchMapping("/{cleaningId}/schedule")
+	public ResponseEntity<CleaningResponse> updateSchedule(
+			@PathVariable Long cleaningId,
+			@Valid @RequestBody UpdateCleaningScheduleRequest request,
+			@AuthenticationPrincipal User manager) {
+		return ResponseEntity.ok(cleaningResponseService.updateSchedule(
+				cleaningId,
+				request.dateTimeStart(),
+				request.dateTimeEnd(),
+				manager
+		));
+	}
+
 	@PutMapping("/{id}")
-	public ResponseEntity<Cleaning> update(@PathVariable Long id, @RequestBody Cleaning updated) {
+	public ResponseEntity<Cleaning> update(
+			@PathVariable Long id,
+			@RequestBody Cleaning updated,
+			@AuthenticationPrincipal User manager) {
 		return cleaningRepository.findById(id).map(existing -> {
+			if (manager == null
+					|| manager.getRole() != Role.MANAGER
+					|| !existing.getManager().getId().equals(manager.getId())) {
+				throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+			}
+			if (Boolean.TRUE.equals(existing.getIsComplete())) {
+				throw new ResponseStatusException(
+						HttpStatus.CONFLICT,
+						"A completed cleaning cannot be updated"
+				);
+			}
 			existing.setDateTimeStart(updated.getDateTimeStart());
 			existing.setDateTimeEnd(updated.getDateTimeEnd());
 			existing.setNotes(updated.getNotes());

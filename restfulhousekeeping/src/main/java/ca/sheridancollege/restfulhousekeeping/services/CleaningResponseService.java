@@ -141,6 +141,52 @@ public class CleaningResponseService {
         cleaning.setCleaner(cleaner);
         return toCleaningResponse(cleaningRepository.save(cleaning));
     }
+
+    @Transactional
+    public CleaningResponse updateSchedule(
+            Long cleaningId,
+            LocalDateTime dateTimeStart,
+            LocalDateTime dateTimeEnd,
+            User manager) {
+        if (manager == null || manager.getRole() != Role.MANAGER) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "Only managers can update cleaning times"
+            );
+        }
+
+        Cleaning cleaning = cleaningRepository.findById(cleaningId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Cleaning not found"
+                ));
+
+        if (!cleaning.getManager().getId().equals(manager.getId())) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "This cleaning is not managed by the current manager"
+            );
+        }
+
+        if (Boolean.TRUE.equals(cleaning.getIsComplete())) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "The times for a completed cleaning cannot be changed"
+            );
+        }
+
+        if (!dateTimeEnd.isAfter(dateTimeStart)) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "The cleaning end time must be after its start time"
+            );
+        }
+
+        cleaning.setDateTimeStart(dateTimeStart);
+        cleaning.setDateTimeEnd(dateTimeEnd);
+
+        return toCleaningResponse(cleaningRepository.save(cleaning));
+    }
     
     public CleaningResponse toCleaningResponse(Cleaning cleaning) {
     	return CleaningResponse.builder()

@@ -7,6 +7,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.time.LocalDateTime;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -157,6 +159,48 @@ class CleaningResponseServiceTests {
     }
 
     @Test
+    void managerCanUpdateCleaningSchedule() {
+        LocalDateTime start = LocalDateTime.of(2026, 11, 2, 10, 30);
+        LocalDateTime end = LocalDateTime.of(2026, 11, 2, 13, 0);
+
+        CleaningResponse response = service.updateSchedule(
+                cleaning.getId(), start, end, manager);
+
+        assertThat(response.getDateTimeStart()).isEqualTo(start);
+        assertThat(response.getDateTimeEnd()).isEqualTo(end);
+        Cleaning saved = cleaningRepository.findById(cleaning.getId()).orElseThrow();
+        assertThat(saved.getDateTimeStart()).isEqualTo(start);
+        assertThat(saved.getDateTimeEnd()).isEqualTo(end);
+    }
+
+    @Test
+    void rejectsScheduleUpdateAfterCleaningIsComplete() {
+        cleaning.setIsComplete(true);
+        cleaningRepository.save(cleaning);
+
+        LocalDateTime start = LocalDateTime.of(2026, 11, 2, 10, 30);
+        LocalDateTime end = LocalDateTime.of(2026, 11, 2, 13, 0);
+
+        assertThatThrownBy(() -> service.updateSchedule(
+                cleaning.getId(), start, end, manager))
+                .isInstanceOfSatisfying(ResponseStatusException.class, exception ->
+                        assertThat(exception.getStatusCode())
+                                .isEqualTo(HttpStatus.CONFLICT));
+    }
+
+    @Test
+    void rejectsScheduleWhoseEndIsNotAfterStart() {
+        LocalDateTime start = LocalDateTime.of(2026, 11, 2, 13, 0);
+        LocalDateTime end = LocalDateTime.of(2026, 11, 2, 10, 30);
+
+        assertThatThrownBy(() -> service.updateSchedule(
+                cleaning.getId(), start, end, manager))
+                .isInstanceOfSatisfying(ResponseStatusException.class, exception ->
+                        assertThat(exception.getStatusCode())
+                                .isEqualTo(HttpStatus.BAD_REQUEST));
+    }
+
+    @Test
     void cleanerRoleCannotAccessAssignmentEndpoint() throws Exception {
         UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken(
@@ -172,6 +216,31 @@ class CleaningResponseServiceTests {
                 .andExpect(status().isForbidden());
 
         assertThat(cleaning.getCleaner()).isNull();
+    }
+
+    @Test
+    void cleanerRoleCannotAccessScheduleEndpoint() throws Exception {
+        UsernamePasswordAuthenticationToken authentication =
+                new UsernamePasswordAuthenticationToken(
+                        teamCleaner,
+                        null,
+                        teamCleaner.getAuthorities()
+                );
+
+        mvc.perform(patch("/cleanings/{cleaningId}/schedule", cleaning.getId())
+                        .with(authentication(authentication))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "dateTimeStart": "2026-11-02T10:30:00",
+                                  "dateTimeEnd": "2026-11-02T13:00:00"
+                                }
+                                """))
+                .andExpect(status().isForbidden());
+
+        Cleaning saved = cleaningRepository.findById(cleaning.getId()).orElseThrow();
+        assertThat(saved.getDateTimeStart()).isNull();
+        assertThat(saved.getDateTimeEnd()).isNull();
     }
 
     @Test
