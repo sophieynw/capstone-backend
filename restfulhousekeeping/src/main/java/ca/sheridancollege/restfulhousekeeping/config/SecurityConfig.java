@@ -46,10 +46,12 @@ public class SecurityConfig {
 						.requestMatchers(HttpMethod.PUT, "/cleanings/*").hasAuthority("MANAGER")
 						.requestMatchers(HttpMethod.DELETE, "/cleanings/*").hasAuthority("MANAGER")
 						.requestMatchers(HttpMethod.DELETE, "/cleaners/*").hasAuthority("MANAGER")
+						.requestMatchers(HttpMethod.POST, "/invitations").hasAuthority("MANAGER")
+						.requestMatchers(HttpMethod.PATCH, "/invitations/*/accept").hasAuthority("CLEANER")
+						.requestMatchers(HttpMethod.PATCH, "/invitations/*/decline").hasAuthority("CLEANER")
 						.requestMatchers(HttpMethod.POST, "/cleanings/*/checklist-items").hasAuthority("MANAGER")
 						.requestMatchers(HttpMethod.DELETE, "/cleanings/*/checklist-items/*").hasAuthority("MANAGER")
 						.requestMatchers(HttpMethod.GET, "/organizations").permitAll()
-						.requestMatchers(HttpMethod.POST, "/email").permitAll()
 						// TODO comment or remove for production
 						.requestMatchers("/availability-slots", "/availability-slots/**").hasAuthority("CLEANER")
 						.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/h2-console/**","/error").permitAll()

@@ -33,7 +33,15 @@ public class UserResponseService {
                 existing.setLastName(request.getLastName());
             }
             if (request.getEmail() != null) {
-                existing.setEmail(request.getEmail());
+                String email = EmailPolicy.normalizeAndValidate(request.getEmail());
+                userRepository.findByEmailIgnoreCase(email)
+                        .filter(user -> !user.getId().equals(existing.getId()))
+                        .ifPresent(user -> {
+                            throw new ResponseStatusException(
+                                    HttpStatus.CONFLICT,
+                                    "Email is already in use.");
+                        });
+                existing.setEmail(email);
             }
             if (request.getOrganization() != null && existing.getOrganization() == null) {
                 existing.setOrganization(request.getOrganization());

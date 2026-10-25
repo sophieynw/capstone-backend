@@ -48,14 +48,6 @@ public class UserController {
     	return ResponseEntity.ok(cleaners);
     }
 
-    @GetMapping("/available")
-    public ResponseEntity<List<UserResponse>> getAvailableCleaners() {
-    	List<UserResponse> cleaners = userRepository
-    			.findAllByRoleAndOrganizationIsNull(Role.CLEANER)
-    			.stream().map(UserResponse::fromUser).toList();
-    	return ResponseEntity.ok(cleaners);
-    }
-
     @PostMapping
     public User create(@RequestBody User user) {
         return userRepository.save(user);

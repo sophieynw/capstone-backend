@@ -54,10 +54,12 @@ class CleaningChecklistItemServiceTests {
     void setup() {
         manager = userRepository.save(User.builder()
                 .username("checklist-manager")
+                .email("checklist-manager@example.com")
                 .role(Role.MANAGER)
                 .build());
         cleaner = userRepository.save(User.builder()
                 .username("checklist-cleaner")
+                .email("checklist-cleaner@example.com")
                 .role(Role.CLEANER)
                 .build());
         Property property = propertyRepository.save(Property.builder()
@@ -129,6 +131,7 @@ class CleaningChecklistItemServiceTests {
     void rejectsManagerWhoDoesNotOwnCleaning() {
         User otherManager = userRepository.save(User.builder()
                 .username("other-checklist-manager")
+                .email("other-checklist-manager@example.com")
                 .role(Role.MANAGER)
                 .build());
 

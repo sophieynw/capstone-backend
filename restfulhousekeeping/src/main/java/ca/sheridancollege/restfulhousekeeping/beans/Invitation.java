@@ -12,14 +12,21 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 @Builder
+@Table(
+        uniqueConstraints = @UniqueConstraint(
+                name = "uk_invitation_email_organization",
+                columnNames = {"invited_email", "organization_id"}))
 public class Invitation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "cleaner_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cleaner_id")
     private User cleaner;
+
+    @Column(name = "invited_email", nullable = false)
+    private String invitedEmail;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "organization_id", nullable = false)
@@ -33,8 +40,6 @@ public class Invitation {
     @Column(nullable = false)
     private InvitationStatus status = InvitationStatus.PENDING;
 
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false)
     private LocalDateTime createdAt;
-
-    private LocalDateTime expiresAt;
 }

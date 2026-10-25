@@ -55,11 +55,13 @@ class UserResponseServiceTests {
                 Organization.builder().name("Team Removal Test").build());
         manager = userRepository.save(User.builder()
                 .username("team-removal-manager")
+                .email("team-removal-manager@example.com")
                 .role(Role.MANAGER)
                 .organization(organization)
                 .build());
         cleaner = userRepository.save(User.builder()
                 .username("team-removal-cleaner")
+                .email("team-removal-cleaner@example.com")
                 .role(Role.CLEANER)
                 .organization(organization)
                 .build());
@@ -94,6 +96,7 @@ class UserResponseServiceTests {
                 Organization.builder().name("Other Team").build());
         User otherManager = userRepository.save(User.builder()
                 .username("other-team-removal-manager")
+                .email("other-team-removal-manager@example.com")
                 .role(Role.MANAGER)
                 .organization(otherOrganization)
                 .build());

@@ -3,13 +3,12 @@ package ca.sheridancollege.restfulhousekeeping.services;
 import ca.sheridancollege.restfulhousekeeping.beans.*;
 import ca.sheridancollege.restfulhousekeeping.models.InvitationResponse;
 import ca.sheridancollege.restfulhousekeeping.repositories.InvitationRepository;
-import ca.sheridancollege.restfulhousekeeping.repositories.OrganizationRepository;
 import ca.sheridancollege.restfulhousekeeping.repositories.UserRepository;
 
 import jakarta.transaction.Transactional;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.mail.MailException;import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
@@ -20,86 +19,100 @@ public class InvitationService {
 
     private final InvitationRepository invitationRepository;
     private final UserRepository userRepository;
-    private final OrganizationRepository organizationRepository;
-    private final EmailService emailService;
+    private final InvitationNotificationService notificationService;
 
     public InvitationService(
             InvitationRepository invitationRepository,
             UserRepository userRepository,
-            OrganizationRepository organizationRepository,
-            EmailService emailService) {
+            InvitationNotificationService notificationService) {
 
         this.invitationRepository = invitationRepository;
         this.userRepository = userRepository;
-        this.organizationRepository = organizationRepository;
-        this.emailService = emailService;
+        this.notificationService = notificationService;
     }
 
     @Transactional
     public InvitationResponse createInvitation(
-            Long cleanerId,
-            Long organizationId,
+            String cleanerEmail,
             User manager) {
 
-        User cleaner = userRepository.findById(cleanerId)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Cleaner not found"));
+        if (manager == null
+                || manager.getRole() != Role.MANAGER
+                || manager.getOrganization() == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "Only managers associated with an organization can invite cleaners");
+        }
 
-        Organization organization =
-                organizationRepository.findById(organizationId)
-                        .orElseThrow(() -> new ResponseStatusException(
-                                HttpStatus.NOT_FOUND,
-                                "Organization not found"));
+        String normalizedEmail = EmailPolicy.normalizeAndValidate(cleanerEmail);
+        User cleaner = userRepository.findByEmailIgnoreCase(normalizedEmail).orElse(null);
 
-        if (cleaner.getRole() != Role.CLEANER) {
+        Organization organization = manager.getOrganization();
+
+        if (cleaner != null && cleaner.getRole() != Role.CLEANER) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     "Only cleaners can be invited");
         }
 
-        if (manager.getOrganization() == null
-                || !manager.getOrganization().getId()
-                        .equals(organization.getId())) {
-            throw new ResponseStatusException(
-                    HttpStatus.FORBIDDEN,
-                    "Manager cannot invite cleaners to this organization");
-        }
-
-        if (cleaner.getOrganization() != null) {
+        if (cleaner != null && cleaner.getOrganization() != null) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
-                    "Cleaner already belongs to an organization");
+                    "This cleaner is already part of an organization");
         }
 
-        Invitation invitation = new Invitation();
+        Invitation existingInvitation = invitationRepository
+                .findByInvitedEmailIgnoreCaseAndOrganizationId(
+                        normalizedEmail,
+                        organization.getId())
+                .orElse(null);
+
+        if (existingInvitation != null
+                && existingInvitation.getStatus() == InvitationStatus.PENDING) {
+            notificationService.invitationSent(
+                    normalizedEmail, cleaner, manager, organization);
+            return toResponse(existingInvitation);
+        }
+
+        Invitation invitation = existingInvitation == null
+                ? new Invitation()
+                : existingInvitation;
         invitation.setCleaner(cleaner);
+        invitation.setInvitedEmail(normalizedEmail);
         invitation.setOrganization(organization);
         invitation.setInvitedBy(manager);
         invitation.setStatus(InvitationStatus.PENDING);
 
         LocalDateTime now = LocalDateTime.now();
         invitation.setCreatedAt(now);
-        invitation.setExpiresAt(now.plusDays(7));
 
         Invitation saved = invitationRepository.save(invitation);
 
-        try {
-        emailService.sendEmail(
-                cleaner.getEmail(),
-                "RESTful Housekeeping: Invitation",
-                "Hello " + cleaner.getFirstName() + ",\n\n"
-                        + "You have been invited to work with "
-                        + manager.getFirstName() + " " + manager.getLastName()
-                        + " at " + organization.getName() + ".\n\n"
-                        + "Please open RESTful Housekeeping to review your invitation.\n\n"
-                        + "Regards,\nRESTful Housekeeping");
-        } catch (MailException e) {
-            throw new ResponseStatusException(
-                HttpStatus.BAD_GATEWAY,
-                "Could not send invitation email", e);
+        notificationService.invitationSent(
+                normalizedEmail, cleaner, manager, organization);
+
+        return toResponse(saved);
     }
 
-    return toResponse(saved);
+    @Transactional
+    public void reconcilePendingInvitations(User user) {
+        List<Invitation> invitations = invitationRepository
+                .findByInvitedEmailIgnoreCaseAndStatus(
+                        user.getEmail(), InvitationStatus.PENDING);
+        for (Invitation invitation : invitations) {
+            if (user.getRole() == Role.CLEANER
+                    && user.getOrganization() == null) {
+                invitation.setCleaner(user);
+            } else {
+                invitation.setStatus(InvitationStatus.DECLINED);
+                notificationService.invitationResponded(
+                        invitation, user, InvitationStatus.DECLINED);
+            }
+        }
+
+        if (!invitations.isEmpty()) {
+            invitationRepository.saveAll(invitations);
+        }
     }
 
     @Transactional
@@ -194,20 +207,28 @@ public class InvitationService {
         invitation.setStatus(InvitationStatus.ACCEPTED);
         Invitation savedInvite = invitationRepository.save(invitation);
 
-        closeOtherPendingInvitations(managedCleaner.getId(), savedInvite.getId());
+        notificationService.invitationResponded(
+                savedInvite, managedCleaner, InvitationStatus.ACCEPTED);
+        declineOtherPendingInvitations(managedCleaner.getId(), savedInvite.getId(), managedCleaner);
         return toResponse(savedInvite);
     }
 
-    private void closeOtherPendingInvitations(Long cleanerId, Long acceptedId) {
-    List<Invitation> others = invitationRepository
-            .findByCleanerIdAndStatus(cleanerId, InvitationStatus.PENDING)
-            .stream()
-            .filter(i -> !i.getId().equals(acceptedId))
-            .toList();
+    private void declineOtherPendingInvitations(
+            Long cleanerId,
+            Long respondedId,
+            User cleaner) {
 
-    others.forEach(i -> i.setStatus(InvitationStatus.EXPIRED));
-    invitationRepository.saveAll(others);
-}
+        List<Invitation> others = invitationRepository
+                .findByCleanerIdAndStatus(cleanerId, InvitationStatus.PENDING)
+                .stream()
+                .filter(invitation -> !invitation.getId().equals(respondedId))
+                .toList();
+
+        others.forEach(invitation -> invitation.setStatus(InvitationStatus.DECLINED));
+        invitationRepository.saveAll(others);
+        others.forEach(invitation -> notificationService.invitationResponded(
+                invitation, cleaner, InvitationStatus.DECLINED));
+    }
 
     // Decline an invitation.
     @Transactional
@@ -221,8 +242,11 @@ public class InvitationService {
         validatePendingInvitation(invitation);
 
         invitation.setStatus(InvitationStatus.DECLINED);
-
-        return toResponse(invitationRepository.save(invitation));
+        Invitation savedInvite = invitationRepository.save(invitation);
+        notificationService.invitationResponded(
+                savedInvite, cleaner, InvitationStatus.DECLINED);
+        declineOtherPendingInvitations(cleaner.getId(), savedInvite.getId(), cleaner);
+        return toResponse(savedInvite);
     }
 
     private Invitation findInvitation(Long invitationId) {
@@ -237,6 +261,7 @@ public class InvitationService {
 
         boolean isInvitedCleaner =
                 user.getRole() == Role.CLEANER
+                && invitation.getCleaner() != null
                 && invitation.getCleaner().getId().equals(user.getId());
 
         boolean isOrganizationManager =
@@ -257,6 +282,7 @@ public class InvitationService {
             User cleaner) {
 
         if (cleaner.getRole() != Role.CLEANER
+                || invitation.getCleaner() == null
                 || !invitation.getCleaner().getId()
                         .equals(cleaner.getId())) {
             throw new ResponseStatusException(
@@ -272,16 +298,6 @@ public class InvitationService {
                     "Invitation is no longer pending");
         }
 
-        if (invitation.getExpiresAt() != null
-                && invitation.getExpiresAt().isBefore(LocalDateTime.now())) {
-
-            invitation.setStatus(InvitationStatus.EXPIRED);
-            invitationRepository.save(invitation);
-
-            throw new ResponseStatusException(
-                    HttpStatus.GONE,
-                    "Invitation has expired");
-        }
     }
 
     private InvitationResponse toResponse(Invitation invitation) {
@@ -291,14 +307,16 @@ public class InvitationService {
 
         return new InvitationResponse(
                 invitation.getId(),
-                cleaner.getId(),
-                cleaner.getFirstName() + " " + cleaner.getLastName(),
+                cleaner == null ? null : cleaner.getId(),
+                cleaner == null
+                        ? null
+                        : cleaner.getFirstName() + " " + cleaner.getLastName(),
+                invitation.getInvitedEmail(),
                 organization.getId(),
                 organization.getName(),
                 manager.getId(),
                 invitation.getStatus(),
-                invitation.getCreatedAt(),
-                invitation.getExpiresAt()
+                invitation.getCreatedAt()
         );
     }
 }

@@ -1,9 +1,8 @@
 package ca.sheridancollege.restfulhousekeeping.models;
 
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 
 public record InvitationRequest(
-    @NotNull @Positive Long cleanerId,
-    @NotNull @Positive Long organizationId
+    @NotBlank @Email String email
 ) {}
