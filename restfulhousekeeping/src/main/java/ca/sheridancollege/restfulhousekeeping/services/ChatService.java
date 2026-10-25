@@ -49,7 +49,7 @@ public class ChatService {
             );
         }
 
-        return userRepository.findByUsername(principal.getName())
+        return userRepository.findByUsernameIgnoreCase(principal.getName())
             .orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.UNAUTHORIZED,
                 "Authenticated user could not be found"

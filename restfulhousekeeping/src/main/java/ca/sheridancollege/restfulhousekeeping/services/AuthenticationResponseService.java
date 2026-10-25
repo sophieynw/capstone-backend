@@ -32,8 +32,8 @@ public class AuthenticationResponseService {
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public AuthenticationResponse register(RegisterRequest request) {
-		String username = request.getUsername().trim();
-		if (userRepository.existsByUsername(username)) {
+		String username = UsernamePolicy.normalizeAndValidate(request.getUsername());
+		if (userRepository.existsByUsernameIgnoreCase(username)) {
 			throw new ResponseStatusException(
 					HttpStatus.CONFLICT,
 					"Username is already taken."
@@ -44,7 +44,7 @@ public class AuthenticationResponseService {
 		User user = User.builder()
 				.firstName(request.getFirstName())
 				.lastName(request.getLastName())
-				.username(request.getUsername())
+				.username(username)
 				.email(request.getEmail())
 				.password(passwordEncoder.encode(request.getPassword()))
 				.phoneNumber(request.getPhoneNumber())
@@ -71,9 +71,10 @@ public class AuthenticationResponseService {
 	
 	// a method to authenticate an existing user and generate a JWT for them
 	public AuthenticationResponse authenticate(AuthenticationRequest request) {
+		String username = UsernamePolicy.normalizeRequired(request.getUsername());
 		authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-				request.getUsername(), request.getPassword()));
-		User user = userRepository.findByUsername(request.getUsername()).orElseThrow();
+				username, request.getPassword()));
+		User user = userRepository.findByUsernameIgnoreCase(username).orElseThrow();
 		var jwtToken = jwtService.generateToken(user);
 		UserResponse userResponse = UserResponse.builder()
 		        .id(user.getId())

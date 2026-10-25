@@ -11,7 +11,7 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 	
-	public Optional<User> findByUsername(String username);
+	public Optional<User> findByUsernameIgnoreCase(String username);
 	
 	public List<User> findAllByOrganization_IdAndRole(Long organizationId, Role role);
 
@@ -19,6 +19,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 	public Optional<User> findFirstByOrganization_IdAndRoleOrderByIdAsc(Long organizationId, Role role);
 
-	public boolean existsByUsername(String username);
+	public boolean existsByUsernameIgnoreCase(String username);
 	
 }
