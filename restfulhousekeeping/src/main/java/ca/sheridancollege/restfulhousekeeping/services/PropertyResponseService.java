@@ -157,6 +157,7 @@ public class PropertyResponseService {
                 .postalCode(property.getPostalCode())
                 .country(property.getCountry())
                 .accessInstructions(property.getAccessInstructions())
+                .propertyPicturePath(property.getPropertyPicturePath())
                 .checkoutTime(property.getCheckoutTime())
                 .checkinTime(property.getCheckinTime())
                 .airbnbCalendarConnected(airbnbCalendarConnected)

@@ -5,24 +5,17 @@ import ca.sheridancollege.restfulhousekeeping.beans.User;
 import ca.sheridancollege.restfulhousekeeping.models.UpdateUserRequest;
 import ca.sheridancollege.restfulhousekeeping.models.UserResponse;
 import ca.sheridancollege.restfulhousekeeping.repositories.UserRepository;
+import ca.sheridancollege.restfulhousekeeping.services.ImageKitService;
 import ca.sheridancollege.restfulhousekeeping.services.UserResponseService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AllArgsConstructor;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/cleaners")
@@ -32,10 +25,12 @@ public class UserController {
 
     private final UserRepository userRepository;
     private final UserResponseService userResponseService;
+    private final ImageKitService imageKitService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getById(@PathVariable Long id) {
+    public ResponseEntity<UserResponse> getById(@PathVariable Long id) {
         return userRepository.findById(id)
+                .map(UserResponse::fromUser)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -69,19 +64,16 @@ public class UserController {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // make the upload folder if it doesn't exist yet
-        File uploadDir = new File("uploads/profile-pictures/");
-        if (!uploadDir.exists()) {
-            uploadDir.mkdirs();
-        }
+        String previousFileId = user.getProfilePictureFileId();
+        ImageKitService.UploadedImage uploaded = imageKitService.upload(
+                file,
+                "/restful-housekeeping/profile-pictures"
+        );
 
-        // give the file a unique name
-        String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
-        Path filePath = Paths.get("uploads/profile-pictures/" + fileName);
-        Files.write(filePath, file.getBytes());
-
-        user.setProfilePicturePath(filePath.toString());
+        user.setProfilePicturePath(uploaded.url());
+        user.setProfilePictureFileId(uploaded.fileId());
         userRepository.save(user);
+        imageKitService.delete(previousFileId);
 
         return ResponseEntity.ok(UserResponse.fromUser(user));
     }
@@ -92,15 +84,6 @@ public class UserController {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         return ResponseEntity.ok(user.getProfilePicturePath());
-    }
-
-    @GetMapping("/profile-pictures/{fileName}")
-    public ResponseEntity<Resource> serveFile(@PathVariable String fileName) throws IOException {
-        Path filePath = Paths.get("uploads/profile-pictures/").resolve(fileName);
-        Resource resource = new FileSystemResource(filePath);
-        return ResponseEntity.ok()
-                .contentType(MediaType.IMAGE_PNG)
-                .body(resource);
     }
 
     @DeleteMapping("/{id}")
