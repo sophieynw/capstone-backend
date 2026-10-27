@@ -18,6 +18,8 @@ import ca.sheridancollege.restfulhousekeeping.repositories.IssueRepository;
 import ca.sheridancollege.restfulhousekeeping.repositories.UserRepository;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AllArgsConstructor;
+import java.time.LocalDateTime;
+
 
 @RestController
 @AllArgsConstructor
@@ -30,21 +32,10 @@ public class IssueController {
     private final UserRepository userRepository;
 
     @GetMapping
-    public List<IssueResponse> getAll() {
-        return issueRepository.findAll().stream().map(IssueResponse::fromIssue).toList();
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<IssueResponse> getById(@PathVariable Long id) {
-        return issueRepository.findById(id)
-                .map(IssueResponse::fromIssue)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    @GetMapping("/cleaning/{cleaningId}")
-    public List<IssueResponse> getByCleaningId(@PathVariable Long cleaningId) {
-        return issueRepository.findByCleaningId(cleaningId).stream()
+    public List<IssueResponse> getForLoggedInManager(@AuthenticationPrincipal User manager) {
+        return issueRepository
+                .findByCleaning_Property_Manager_IdOrderByReportedAtDesc(manager.getId())
+                .stream()
                 .map(IssueResponse::fromIssue).toList();
     }
 
@@ -68,6 +59,7 @@ public class IssueController {
                 .reportedBy(reporter)
                 .issueType(request.getIssueType().trim())
                 .description(request.getDescription().trim())
+                .reportedAt(LocalDateTime.now())
                 .build();
 
         return IssueResponse.fromIssue(issueRepository.save(issue));

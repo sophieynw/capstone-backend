@@ -10,6 +10,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.time.LocalDateTime;
+
 
 @Data
 @NoArgsConstructor
@@ -32,4 +34,5 @@ public class Issue {
 
     private String issueType;
     private String description;
+    private LocalDateTime reportedAt;
 }

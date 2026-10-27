@@ -7,5 +7,5 @@ import ca.sheridancollege.restfulhousekeeping.beans.Issue;
 
 @Repository
 public interface IssueRepository extends JpaRepository<Issue, Long> {
-    List<Issue> findByCleaningId(Long cleaningId);
+    List<Issue> findByCleaning_Property_Manager_IdOrderByReportedAtDesc(Long managerId);
 }
