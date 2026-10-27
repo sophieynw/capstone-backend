@@ -17,6 +17,7 @@ public class IssueResponse {
 
     private Long id;
     private Long cleaningId;
+    private Long propertyId;
     private Long reportedById;
     private String reportedByName;
     private String issueType;
@@ -31,6 +32,8 @@ public class IssueResponse {
         return IssueResponse.builder()
                 .id(issue.getId())
                 .cleaningId(issue.getCleaning() != null ? issue.getCleaning().getId() : null)
+                .propertyId(issue.getCleaning() != null && issue.getCleaning().getProperty() != null
+                        ? issue.getCleaning().getProperty().getId() : null)
                 .reportedById(reporter != null ? reporter.getId() : null)
                 .reportedByName(reporter != null
                         ? reporter.getFirstName() + " " + reporter.getLastName()

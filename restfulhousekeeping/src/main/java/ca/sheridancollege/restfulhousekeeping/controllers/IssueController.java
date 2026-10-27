@@ -18,7 +18,6 @@ import ca.sheridancollege.restfulhousekeeping.repositories.IssueRepository;
 import ca.sheridancollege.restfulhousekeeping.repositories.UserRepository;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AllArgsConstructor;
-import ca.sheridancollege.restfulhousekeeping.repositories.PropertyRepository;
 import java.time.LocalDateTime;
 
 
@@ -31,24 +30,12 @@ public class IssueController {
     private final IssueRepository issueRepository;
     private final CleaningRepository cleaningRepository;
     private final UserRepository userRepository;
-    private final PropertyRepository propertyRepository;
 
     @GetMapping
-    public List<IssueResponse> getAll() {
-        return issueRepository.findAll().stream().map(IssueResponse::fromIssue).toList();
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<IssueResponse> getById(@PathVariable Long id) {
-        return issueRepository.findById(id)
-                .map(IssueResponse::fromIssue)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    @GetMapping("/cleaning/{cleaningId}")
-    public List<IssueResponse> getByCleaningId(@PathVariable Long cleaningId) {
-        return issueRepository.findByCleaningId(cleaningId).stream()
+    public List<IssueResponse> getForLoggedInManager(@AuthenticationPrincipal User manager) {
+        return issueRepository
+                .findByCleaning_Property_Manager_IdOrderByReportedAtDesc(manager.getId())
+                .stream()
                 .map(IssueResponse::fromIssue).toList();
     }
 
@@ -106,26 +93,5 @@ public class IssueController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "issueType and description are required");
         }
-    }
-    
-    // issues for one of the logged-in manager's properties, newest first
-    @GetMapping("/property/{propertyId}")
-    public List<IssueResponse> getByPropertyId(@PathVariable Long propertyId,
-            @AuthenticationPrincipal User manager) {
-
-        propertyRepository.findByIdAndManager_Id(propertyId, manager.getId())
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Property not found"));
-
-        return issueRepository.findByCleaning_Property_IdOrderByIdDesc(propertyId)
-                .stream().map(IssueResponse::fromIssue).toList();
-    }
-    
-    // every issue on the logged-in manager's properties, newest first
-    @GetMapping("/manager")
-    public List<IssueResponse> getForManager(@AuthenticationPrincipal User manager) {
-        return issueRepository
-                .findByCleaning_Property_Manager_IdOrderByReportedAtDesc(manager.getId())
-                .stream().map(IssueResponse::fromIssue).toList();
     }
 }
